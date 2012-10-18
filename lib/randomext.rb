@@ -17,4 +17,9 @@ class Random
     @z = v1 * w
     return v2 * w
   end
+
+  # Draw a random sample from normal(Gaussian) distribution.
+  def normal(average, sd)
+    average + standard_normal()*sd
+  end
 end

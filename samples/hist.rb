@@ -59,6 +59,9 @@ def normal_distribution(x, average = 0, sd = 1.0)
 end
 
 rng = Random.new
-draw_histogram("normal.png", 80, 100000, -6.0, 6.0, rng.method(:standard_normal),
+draw_histogram("snormal.png", 80, 100000, -6.0, 6.0, rng.method(:standard_normal),
                method(:normal_distribution))
                
+draw_histogram("normal.png", 80, 100000, -3.0, 9.0,
+               proc{ rng.normal(3.0, 1.7) },
+               proc{|x| normal_distribution(x, 3.0, 1.7) })
