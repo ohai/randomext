@@ -54,14 +54,25 @@ def draw_histogram(filename, num_bins, num_samples, min, max, gen, func=nil)
   plot(filename, hist, curve)
 end
 
-def normal_distribution(x, average = 0, sd = 1.0)
-  exp(-(x - average)**2/(2 * sd**2))/sqrt(2*PI*sd**2)
+module Distribution
+  module_function
+  def normal(x, average = 0, sd = 1.0)
+    exp(-(x - average)**2/(2 * sd**2))/sqrt(2*PI*sd**2)
+  end
+  
+  def lognormal(x, mu=0.0, sigma=1.0)
+    exp(-(log(x)-mu)**2/(2*sigma**2))/(x*sqrt(2*PI)*sigma)
+  end
 end
 
 rng = Random.new
-draw_histogram("snormal.png", 80, 100000, -6.0, 6.0, rng.method(:standard_normal),
-               method(:normal_distribution))
+draw_histogram("snormal.png", 80, 100000, -6.0, 6.0,
+               rng.method(:standard_normal), Distribution.method(:normal))
+               
                
 draw_histogram("normal.png", 80, 100000, -3.0, 9.0,
                proc{ rng.normal(3.0, 1.7) },
-               proc{|x| normal_distribution(x, 3.0, 1.7) })
+               proc{|x| Distribution.normal(x, 3.0, 1.7) })
+
+draw_histogram("lognormal.png", 100, 100000, 0.0, 8.0,
+               rng.method(:lognormal), Distribution.method(:lognormal))

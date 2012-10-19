@@ -19,7 +19,21 @@ class Random
   end
 
   # Draw a random sample from normal(Gaussian) distribution.
-  def normal(average, sd)
-    average + standard_normal()*sd
+  #
+  # @param [Float] mean mean/average
+  # @param [Float] sd Standard deviarion
+  def normal(mean=0.0, sd=1.0)
+    mean + standard_normal()*sd
+  end
+
+  # Draw a random sample from a log normal distribution.
+  #
+  # The lognormal distribution with parameters mu and sigma
+  # is defined
+  #   1/sqrt(2*PI*sigma**2)*exp(-(log(x)-mu)**2/(2*sigma**2))
+  # @param [Float] mu mean in the normal distribution
+  # @param [Float] sigma standard deviarion in the normal distribution
+  def lognormal(mu=0.0, sigma=1.0)
+    Math.exp(normal(mu, sigma))
   end
 end
