@@ -63,6 +63,10 @@ module Distribution
   def lognormal(x, mu=0.0, sigma=1.0)
     exp(-(log(x)-mu)**2/(2*sigma**2))/(x*sqrt(2*PI)*sigma)
   end
+
+  def cauthy(x, mu, theta)
+    theta/(theta**2 + (x-mu)**2)/PI
+  end
 end
 
 rng = Random.new
@@ -76,3 +80,7 @@ draw_histogram("normal.png", 80, 100000, -3.0, 9.0,
 
 draw_histogram("lognormal.png", 100, 100000, 0.0, 8.0,
                rng.method(:lognormal), Distribution.method(:lognormal))
+
+draw_histogram("cauthy.png", 100, 100000, -40.0, 46.0,
+               proc{ rng.cauthy(3.0, 1.5) },
+               proc{|x| Distribution.cauthy(x, 3.0, 1.5) })
