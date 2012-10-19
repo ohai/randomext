@@ -1,5 +1,6 @@
 require 'randomext'
 require 'tempfile'
+require 'benchmark'
 
 include Math
 
@@ -43,15 +44,19 @@ ensure
   curve_tmp.close(true)
 end
 
-def draw_histogram(filename, num_bins, num_samples, min, max, gen, func=nil)
-  hist = histogram(num_bins, num_samples, min, max, gen)
+def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=nil)
+  hist = nil
+  reporter.report("#{name}:") do
+    hist = histogram(num_bins, num_samples, min, max, gen)
+  end
+  
   if func
     curve = hist.map{|x, _| [x, func[x]] }
   else
     curve = []
   end
 
-  plot(filename, hist, curve)
+  plot("#{name}.png", hist, curve)
 end
 
 module Distribution
@@ -70,17 +75,20 @@ module Distribution
 end
 
 rng = Random.new
-draw_histogram("snormal.png", 80, 100000, -6.0, 6.0,
-               rng.method(:standard_normal), Distribution.method(:normal))
-               
-               
-draw_histogram("normal.png", 80, 100000, -3.0, 9.0,
-               proc{ rng.normal(3.0, 1.7) },
-               proc{|x| Distribution.normal(x, 3.0, 1.7) })
 
-draw_histogram("lognormal.png", 100, 100000, 0.0, 8.0,
-               rng.method(:lognormal), Distribution.method(:lognormal))
+Benchmark.bm(12) do |reporter|
+  draw_histogram("snormal", 80, 100000, -6.0, 6.0, reporter,
+                 rng.method(:standard_normal), Distribution.method(:normal))
+  
+  
+  draw_histogram("normal", 80, 100000, -3.0, 9.0, reporter,
+                 proc{ rng.normal(3.0, 1.7) },
+                 proc{|x| Distribution.normal(x, 3.0, 1.7) })
 
-draw_histogram("cauthy.png", 100, 100000, -40.0, 46.0,
-               proc{ rng.cauthy(3.0, 1.5) },
-               proc{|x| Distribution.cauthy(x, 3.0, 1.5) })
+  draw_histogram("lognormal", 100, 100000, 0.0, 8.0, reporter,
+                 rng.method(:lognormal), Distribution.method(:lognormal))
+
+  draw_histogram("cauthy", 100, 100000, -40.0, 46.0, reporter,
+                 proc{ rng.cauthy(3.0, 1.5) },
+                 proc{|x| Distribution.cauthy(x, 3.0, 1.5) })
+end
