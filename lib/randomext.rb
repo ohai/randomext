@@ -22,10 +22,10 @@ class Random
 
   # Draw a random sample from a Cauthy distribution.
   #
-  # @param [Float] mu
-  # @param [Float] theta
-  def cauthy(mu, theta)
-    mu + theta*standard_cauthy()
+  # @param [Float] loc location parameter
+  # @param [Float] scale scale parameter
+  def cauthy(loc, scale)
+    loc + scale*standard_cauthy()
   end
 
   # Draw a random sample from the standard Cauthy distribution.
@@ -35,5 +35,60 @@ class Random
     y1 = standard_normal()
     begin; y2 = standard_normal(); end until y2 != 0.0
     return y1/y2
+  end
+
+  # Draw a random sample from a Levy distribution.
+  #
+  # @param loc location parameter
+  # @param scale scale parameter
+  def levy(loc=0.0, scale=1.0)
+    begin z = standard_normal.abs; end until z > 0
+    loc + scale/z**2
+  end
+
+  # Draw a random sample from a exponential distribution.
+  #
+  # Inverse function method is used.
+  # @param scale scale parameter
+  def exponential(scale=1.0)
+    -scale * Math.log(1-rand)
+  end
+
+  # Draw a random sample from a gamma distribution
+  #
+  # @param shape shape parameter
+  # @param scale scale parameter
+  def gamma(shape, scale=1.0)
+    case
+    when shape <= 0.0
+      raise ArgumentError, "Random#gamma: shape parameter should be positive"
+    when shape > 1.0
+      scale * _gamma(shape)
+    when shape == 1.0
+      exponential(scale)
+    when shape < 1.0
+      scale*_gamma(shape+1)*rand_open_interval**(1.0/shape)
+    end
+  end
+  
+  def _gamma(shape)
+    d = shape-1.0/3.0
+    c = 1/Math.sqrt(9.0*d)
+    loop do
+      z = standard_normal
+      v = 1 + c*z
+      next if v <= 0
+      w = v**3; y = d*w
+      u = rand_open_interval
+      next if u > 1 - 0.0331*z**4 && z**2/2+d*Math.log(w)-y+d < Math.log(u)
+      return y
+    end
+  end
+  private :_gamma
+
+  # Draw a sample from the uniform distribution on (0, 1)
+  def rand_open_interval
+    begin; x = rand; end until x != 0.0
+    x
   end
 end

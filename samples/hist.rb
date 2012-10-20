@@ -8,18 +8,16 @@ include Math
 def histogram(num_bins, num_samples, min, max, gen)
   binsize = (max - min).to_f / num_bins
   bins = Array.new(num_bins, 0)
-  datasize = 0
   
   num_samples.times do
     n = (gen[] - min).div(binsize)
     if 0 <= n && n < num_bins
-      datasize += 1
       bins[n] += 1
     end
   end
 
   return bins.map.with_index{|k, n|
-    [binsize*(n+0.5)+min, k/(binsize*datasize.to_f)]
+    [binsize*(n+0.5)+min, k/(binsize*num_samples.to_f)]
   }
 end
 
@@ -72,6 +70,18 @@ module Distribution
   def cauthy(x, mu, theta)
     theta/(theta**2 + (x-mu)**2)/PI
   end
+
+  def levy(x, mu, theta)
+    sqrt(theta/(2*PI))*(x-mu)**(-1.5)*exp(-theta/(2*(x-mu)))
+  end
+
+  def exponential(x, theta)
+    exp(-x/theta)/theta
+  end
+
+  def gamma(x, alpha, beta)
+    beta**(-alpha)*x**(alpha-1)*exp(-x/beta)/Math.gamma(alpha)
+  end
 end
 
 rng = Random.new
@@ -91,4 +101,16 @@ Benchmark.bm(12) do |reporter|
   draw_histogram("cauthy", 100, 100000, -40.0, 46.0, reporter,
                  proc{ rng.cauthy(3.0, 1.5) },
                  proc{|x| Distribution.cauthy(x, 3.0, 1.5) })
+  draw_histogram("levy", 200, 100000, 0.0, 40.0, reporter,
+                 proc{ rng.levy(0.8, 1.2) },
+                 proc{|x| Distribution.levy(x, 0.8, 1.2)})
+  draw_histogram("exponential", 100, 100000, 0.0, 10.0, reporter,
+                 proc{ rng.exponential(1.3) },
+                 proc{|x| Distribution.exponential(x, 1.3) })
+  draw_histogram("gamma", 100, 100000, 0.0, 10.0, reporter,
+                 proc{ rng.gamma(2.0, 1.0) },
+                 proc{|x| Distribution.gamma(x, 2.0, 1.0) })
+  draw_histogram("gamma2", 200, 100000, 0.0, 4.0, reporter,
+                 proc{ rng.gamma(0.4, 1.0) },
+                 proc{|x| Distribution.gamma(x, 0.4, 1.0) })
 end
