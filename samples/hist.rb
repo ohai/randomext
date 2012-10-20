@@ -82,6 +82,11 @@ module Distribution
   def gamma(x, alpha, beta)
     beta**(-alpha)*x**(alpha-1)*exp(-x/beta)/Math.gamma(alpha)
   end
+
+  def beta(x, alpha, beta)
+    b = Math.gamma(alpha)*Math.gamma(beta)/Math.gamma(alpha+beta)
+    x**(alpha-1)*(1-x)**(beta-1)/b
+  end
 end
 
 rng = Random.new
@@ -113,4 +118,10 @@ Benchmark.bm(12) do |reporter|
   draw_histogram("gamma2", 200, 100000, 0.0, 4.0, reporter,
                  proc{ rng.gamma(0.4, 1.0) },
                  proc{|x| Distribution.gamma(x, 0.4, 1.0) })
+  draw_histogram("beta", 100, 100000, 0.0, 1.0, reporter,
+                 proc{ rng.beta(4.3, 7.2) },
+                 proc{|x| Distribution.beta(x, 4.3, 7.2) })
+  draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
+                 proc{ rng.beta(0.7, 0.42) },
+                 proc{|x| Distribution.beta(x, 0.7, 0.42) })
 end

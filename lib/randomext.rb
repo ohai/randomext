@@ -86,6 +86,12 @@ class Random
   end
   private :_gamma
 
+  # Draw a sample from a beta distribution.
+  def beta(alpha, beta)
+    y1 = gamma(alpha); y2 = gamma(beta)
+    y1/(y1+y2)
+  end
+  
   # Draw a sample from the uniform distribution on (0, 1)
   def rand_open_interval
     begin; x = rand; end until x != 0.0
