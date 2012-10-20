@@ -21,13 +21,37 @@ inline static double sn(double x)
   return exp(-x*x/2);
 }
 
-static double sample_from_tail(VALUE self)
+static double sample_from_tail(VALUE random)
 {
   for (;;) {
-    double x = sqrt(R*R-2*log(1-rb_random_real(self)));
-    if (x*rb_random_real(self) <= R)
+    double x = sqrt(R*R-2*log(1-rb_random_real(random)));
+    if (x*rb_random_real(random) <= R)
       return x;
   }
+}
+
+static double rb_random_standard_normal(VALUE random)
+{
+  int i;
+  int64_t u;
+  int sign;
+  double ux;
+  
+  for (;;) {
+    unsigned int u0 = rb_random_int32(random);
+    i = u0 & MASK(K);
+    sign = (u0 & BIT(K)) ? 1 : -1;
+    u = ((uint64_t)(u0 >> (K+1)) << 32) | rb_random_int32(random);
+
+    if (u < k[i])
+      return sign*u*w[i];
+    if (i == N-1)
+      return sign*sample_from_tail(random);
+    ux = u * w[i];
+    if ( rb_random_real(random)*(f[i]-f[i+1]) <= sn(ux)-f[i+1])
+      return sign*ux;
+  }
+
 }
 
 /*
@@ -37,29 +61,9 @@ static double sample_from_tail(VALUE self)
  *
  * Ziggurat method is used for random sampling.
  */
-static VALUE standard_normal(VALUE self)
+static VALUE random_standard_normal(VALUE self)
 {
-  int i;
-  int64_t u;
-  int sign;
-  double ux;
-  
-  for (;;) {
-    unsigned int u0 = rb_random_int32(self);
-    i = u0 & MASK(K);
-    sign = (u0 & BIT(K)) ? 1 : -1;
-    u = ((uint64_t)(u0 >> (K+1)) << 32) | rb_random_int32(self);
-
-    if (u < k[i])
-      return DBL2NUM(sign*u*w[i]);
-    if (i == N-1)
-      return DBL2NUM(sign*sample_from_tail(self));
-    ux = u * w[i];
-    if ( rb_random_real(self)*(f[i]-f[i+1]) <= sn(ux)-f[i+1])
-      return DBL2NUM(sign*ux);
-  }
-  
-  return Qnil;
+  return DBL2NUM(rb_random_standard_normal(self));
 }
 
 inline static uint64_t pow2(int r)
@@ -88,11 +92,37 @@ static void init_table(void)
   f[0] = 1;
 }
 
+inline static double random_open_interval(VALUE random)
+{
+  for (;;) {
+    double u = rb_random_real(random);
+    if (u != 0.0) return u;
+  }
+}
+
+static VALUE random_gamma(VALUE self, VALUE shape)
+{
+  double d = NUM2DBL(shape) - 1.0/3.0;
+  double c = 1/sqrt(9*d);
+
+  for (;;) {
+    double z, v, y, w, u;
+    z = rb_random_standard_normal(self);
+    v = 1 + c*z;
+    if (v <= 0) continue;
+    w = v*v*v; y = d*w;
+    u = random_open_interval(self);
+    if (u > 1 - 0.0331*(z*z*z*z) && z*z/2 + d*log(w) - y + d < log(u))
+      continue;
+    return DBL2NUM(y);
+  }
+}
+
 void Init_randomext_native()
 {
   VALUE cRandom = rb_const_get(rb_cObject, rb_intern("Random"));
 
-  rb_define_method(cRandom, "standard_normal", standard_normal, 0);
-
+  rb_define_method(cRandom, "standard_normal", random_standard_normal, 0);
+  rb_define_private_method(cRandom, "_gamma", random_gamma, 1);
   init_table();
 }

@@ -70,21 +70,6 @@ class Random
       scale*_gamma(shape+1)*rand_open_interval**(1.0/shape)
     end
   end
-  
-  def _gamma(shape)
-    d = shape-1.0/3.0
-    c = 1/Math.sqrt(9.0*d)
-    loop do
-      z = standard_normal
-      v = 1 + c*z
-      next if v <= 0
-      w = v**3; y = d*w
-      u = rand_open_interval
-      next if u > 1 - 0.0331*z**4 && z**2/2+d*Math.log(w)-y+d < Math.log(u)
-      return y
-    end
-  end
-  private :_gamma
 
   # Draw a sample from a beta distribution.
   def beta(alpha, beta)
