@@ -43,6 +43,8 @@ ensure
 end
 
 def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=nil)
+  return if !ARGV.empty? && !ARGV.include?(name)
+  
   hist = nil
   reporter.report("#{name}:") do
     hist = histogram(num_bins, num_samples, min, max, gen)
