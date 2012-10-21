@@ -76,6 +76,13 @@ class Random
     y1 = gamma(alpha); y2 = gamma(beta)
     y1/(y1+y2)
   end
+
+  # Draw a sample from Bernoulli distribution.
+  #
+  # @param p the probability returning 1 
+  def bernoulli(p)
+    (rand < p) ? 1 : 0
+  end
   
   # Draw a sample from the uniform distribution on (0, 1)
   def rand_open_interval

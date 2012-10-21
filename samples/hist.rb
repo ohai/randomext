@@ -59,6 +59,17 @@ def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=ni
   plot("#{name}.png", hist, curve)
 end
 
+def draw_disc_histogram(name, num_samples, reporter, gen, func)
+  h = Hash.new(0)
+  reporter.report("#{name}:") do
+    num_samples.times{ h[gen[]] += 1 }
+  end
+  hist = h.map{|k, v| [k, v.to_f/num_samples] }
+  curve = hist.map{|x, _| [x, func[x]] }
+
+  plot("#{name}.png", hist, curve)
+end
+
 module Distribution
   module_function
   def normal(x, average = 0, sd = 1.0)
@@ -126,4 +137,7 @@ Benchmark.bm(12) do |reporter|
   draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(0.7, 0.42) },
                  proc{|x| Distribution.beta(x, 0.7, 0.42) })
+  draw_disc_histogram("bernouli", 100000, reporter,
+                      proc{ rng.bernoulli(0.65) },
+                      proc{|x| x == 0 ? 0.35 : 0.65 })
 end
