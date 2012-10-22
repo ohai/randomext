@@ -1,6 +1,7 @@
 require 'randomext'
 require 'tempfile'
 require 'benchmark'
+require 'bigdecimal'
 
 include Math
 
@@ -21,7 +22,7 @@ def histogram(num_bins, num_samples, min, max, gen)
   }
 end
 
-def plot(filename, data, curve)
+def plot(filename, data, curve, curve_type)
   hist_tmp = Tempfile.new("hist")
   curve_tmp = Tempfile.new("curve")
   
@@ -34,7 +35,7 @@ def plot(filename, data, curve)
     process.puts("set term png")
     process.puts("set output \"#{filename}\"")
     process.puts("set nokey")
-    process.puts("plot \"#{hist_tmp.path}\" w boxes, \"#{curve_tmp.path}\" w l")
+    process.puts("plot \"#{hist_tmp.path}\" w boxes, \"#{curve_tmp.path}\" w #{curve_type}")
     process.flush
   end
 ensure
@@ -56,18 +57,20 @@ def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=ni
     curve = []
   end
 
-  plot("#{name}.png", hist, curve)
+  plot("#{name}.png", hist, curve, "lines")
 end
 
 def draw_disc_histogram(name, num_samples, reporter, gen, func)
+  return if !ARGV.empty? && !ARGV.include?(name)
+  
   h = Hash.new(0)
   reporter.report("#{name}:") do
     num_samples.times{ h[gen[]] += 1 }
   end
-  hist = h.map{|k, v| [k, v.to_f/num_samples] }
+  hist = h.map{|k, v| [k, v.to_f/num_samples] }.sort_by{|k, v| k }
   curve = hist.map{|x, _| [x, func[x]] }
 
-  plot("#{name}.png", hist, curve)
+  plot("#{name}.png", hist, curve, "points")
 end
 
 module Distribution
@@ -99,6 +102,27 @@ module Distribution
   def beta(x, alpha, beta)
     b = Math.gamma(alpha)*Math.gamma(beta)/Math.gamma(alpha+beta)
     x**(alpha-1)*(1-x)**(beta-1)/b
+  end
+
+  def combination(n ,r)
+    r = n - r if n/2 < r
+    ret = 1
+    n.downto(n-r+1) do |k|
+      ret = ret*k/(n-k+1)
+    end
+    ret
+  end
+  
+  def binomial(x, n, p)
+    ret = 1.0
+    q = 1.0-p
+    n.downto(n-x+1) do |k|
+      ret = ret*k/(n-k+1)*p
+      ret *= q if n-k+1 <= n-x
+    end
+    (n-2*x).times{ ret *= q }
+    return ret
+    combination(n, x) * BigDecimal(p,14)**x * BigDecimal(1-p,14)**(n-x)
   end
 end
 
@@ -137,7 +161,17 @@ Benchmark.bm(12) do |reporter|
   draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(0.7, 0.42) },
                  proc{|x| Distribution.beta(x, 0.7, 0.42) })
-  draw_disc_histogram("bernouli", 100000, reporter,
+  draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })
+
+  draw_disc_histogram("binomial1-20", 100000, reporter,
+                      proc{ rng.binomial1(20, 0.45) },
+                      proc{|x| Distribution.binomial(x, 20, 0.45) })
+  draw_disc_histogram("binomial1-200", 1000000, reporter,
+                      proc{ rng.binomial1(200, 0.65) },
+                      proc{|x| Distribution.binomial(x, 200, 0.65) })
+  # draw_disc_histogram("binomial2", 100000, reporter,
+  #                     proc{ rng.binomial2(200, 0.45) },
+  #                     proc{|x| Distribution.binomial(x, 200, 0.45) })
 end
