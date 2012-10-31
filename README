@@ -1,0 +1,25 @@
+randomext
+
+= Overview
+This library extends class Random in the Ruby standard library.
+The Random class in the Ruby standard library supports only 
+random sampling from discrete/continuous uniform distribution.
+
+This library provides random sampling methods from 
+many kinds of probability distributions such as:
+  * normal (Gaussian)
+  * lognormal
+  * Cauthy
+  * levy
+  * exponential
+  * gamma
+  * beta
+  * Bernoulli
+  * binomial
+
+= Usage
+require 'randomext' and some methods and classes are added to class Random.
+
+= References
+Almost all algorithms are based on:
+四辻哲章, "計算機シミュレーションのための確率分布乱数生成法", プレアデス出版 (2010)
