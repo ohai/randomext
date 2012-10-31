@@ -33,6 +33,13 @@ static double binomial_distribution(int n, int k, double theta)
   return ret;
 }
 
+/*
+ * call-seq: prng.binomial(n, theta) -> int
+ *
+ * Draws a random sample from a binomial distribution
+ *
+ * Inverse function method is used.
+ */
 static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
 {
   int n = NUM2INT(num);
@@ -186,6 +193,20 @@ static VALUE binomial_alloc(VALUE klass)
   return obj;
 }
 
+/*
+ * call-seq: Random::Binomial.new(rng, n, theta) -> binomial
+ *
+ * Returns a random sampler from a binomial distribution.
+ *
+ * This sampler uses table plus square histgram method with
+ * Robin Hoot method. This method constructs a table for each
+ * distribution. If you once construct the table, you can
+ * draw a random sample fast for large n (n >= 40), but the
+ * cost of the table construction is expensive. Therefore,
+ * if you need to draw many samples from the same binomial distribution,
+ * you had better to use this class. Otherwise, you should use
+ * Random#binomial.
+ */
 static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
 {
   binomial_t *bin;
@@ -202,6 +223,12 @@ static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
   return Qnil;
 }
 
+/*
+ * call-seq: binomial.rand
+ *
+ * Draws a sample from the binomimial distribution whose parameters
+ * are specified in Random::Binomial.new.
+ */
 static VALUE binomial_rand(VALUE self)
 {
   /* Assume BINOMIAL_M == 64 */
@@ -226,6 +253,11 @@ static VALUE binomial_rand(VALUE self)
     return INT2NUM(bin->K[J]);
 }
 
+/*
+ * call-seq: binomial.n
+ *
+ * Returns the parameter n.
+ */
 static VALUE binomial_n(VALUE self)
 {
   binomial_t *bin;
@@ -234,6 +266,11 @@ static VALUE binomial_n(VALUE self)
   return INT2NUM(bin->n);
 }
 
+/*
+ * call-seq: binomial.theta
+ *
+ * Returns the parameter theta.
+ */
 static VALUE binomial_theta(VALUE self)
 {
   binomial_t *bin;
@@ -267,7 +304,7 @@ void randomext_binomial_init(VALUE cRandom)
 {
   VALUE cBinomial = rb_define_class_under(cRandom, "Binomial", rb_cObject);
   
-  rb_define_method(cRandom, "binomial1", random_binomial_inv, 2);
+  rb_define_method(cRandom, "binomial", random_binomial_inv, 2);
   rb_define_alloc_func(cBinomial, binomial_alloc);
   rb_define_method(cBinomial, "initialize", binomial_initialize, 3);
   rb_define_method(cBinomial, "rand", binomial_rand, 0);

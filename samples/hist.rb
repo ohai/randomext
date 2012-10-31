@@ -166,10 +166,10 @@ Benchmark.bm(14) do |reporter|
                       proc{|x| x == 0 ? 0.35 : 0.65 })
 
   draw_disc_histogram("binomial1-20", 100000, reporter,
-                      proc{ rng.binomial1(20, 0.45) },
+                      proc{ rng.binomial(20, 0.45) },
                       proc{|x| Distribution.binomial(x, 20, 0.45) })
   draw_disc_histogram("binomial1-200", 100000, reporter,
-                      proc{ rng.binomial1(200, 0.65) },
+                      proc{ rng.binomial(200, 0.65) },
                       proc{|x| Distribution.binomial(x, 200, 0.65) })
 
   binomial = Random::Binomial.new(rng, 20, 0.45);

@@ -39,8 +39,8 @@ class Random
 
   # Draw a random sample from a Levy distribution.
   #
-  # @param loc location parameter
-  # @param scale scale parameter
+  # @param [Float] loc location parameter
+  # @param [Float] scale scale parameter
   def levy(loc=0.0, scale=1.0)
     begin z = standard_normal.abs; end until z > 0
     loc + scale/z**2
@@ -49,15 +49,15 @@ class Random
   # Draw a random sample from a exponential distribution.
   #
   # Inverse function method is used.
-  # @param scale scale parameter
+  # @param [Float] scale scale parameter
   def exponential(scale=1.0)
     -scale * Math.log(1-rand)
   end
 
   # Draw a random sample from a gamma distribution
   #
-  # @param shape shape parameter
-  # @param scale scale parameter
+  # @param [Float] shape shape parameter
+  # @param [Float] scale scale parameter
   def gamma(shape, scale=1.0)
     case
     when shape <= 0.0
