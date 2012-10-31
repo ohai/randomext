@@ -117,7 +117,6 @@ void Init_randomext_native()
   
   rb_define_method(cRandom, "standard_normal", random_standard_normal, 0);
   rb_define_private_method(cRandom, "_gamma", random_gamma, 1);
-  //rb_define_method(cRandom, "binomial2", random_binomial_table, 2);
 
   randomext_binomial_init(cRandom);
   init_table();

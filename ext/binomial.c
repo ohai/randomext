@@ -226,6 +226,22 @@ static VALUE binomial_rand(VALUE self)
     return INT2NUM(bin->K[J]);
 }
 
+static VALUE binomial_n(VALUE self)
+{
+  binomial_t *bin;
+  Data_Get_Struct(self, binomial_t, bin);
+
+  return INT2NUM(bin->n);
+}
+
+static VALUE binomial_theta(VALUE self)
+{
+  binomial_t *bin;
+  Data_Get_Struct(self, binomial_t, bin);
+
+  return DBL2NUM(bin->theta);
+}
+
 #if 0
 static VALUE binomial_debug_info(VALUE self)
 {
@@ -255,5 +271,7 @@ void randomext_binomial_init(VALUE cRandom)
   rb_define_alloc_func(cBinomial, binomial_alloc);
   rb_define_method(cBinomial, "initialize", binomial_initialize, 3);
   rb_define_method(cBinomial, "rand", binomial_rand, 0);
+  rb_define_method(cBinomial, "n", binomial_n, 0);
+  rb_define_method(cBinomial, "theta", binomial_theta, 0);
   //rb_define_method(cBinomial, "debug_info", binomial_debug_info, 0);
 }
