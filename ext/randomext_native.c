@@ -1,15 +1,13 @@
 #include <ruby.h>
 #include <math.h>
 #include <stdint.h>
+#include "randomext.h"
 
 #define R 3.442619855899
 #define V 9.91256303526217e-3
 #define K 7
 #define M 64
 #define N (1<<K)
-
-#define MASK(bits) (~(~0<<(bits)))
-#define BIT(nth) (1<<(nth))
 
 static double w[N];
 static int64_t k[N];
@@ -66,11 +64,6 @@ static VALUE random_standard_normal(VALUE self)
   return DBL2NUM(rb_random_standard_normal(self));
 }
 
-inline static uint64_t pow2(int r)
-{
-  return (uint64_t)1<<r;
-}
-
 static void init_table(void)
 {
   int i;
@@ -118,116 +111,14 @@ static VALUE random_gamma(VALUE self, VALUE shape)
   }
 }
 
-static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
-{
-  int n = NUM2INT(num);
-  double theta = NUM2DBL(prob);
-  double s = theta/(1-theta);
-  double a = (n+1)*s;
-  double t = 1.0/s;
-  double b = (n+1)*t;
-  int m = ceil(theta*(n-1));
-  double d;
-  int i;
-  double pu, pl; 
-  int xu, xl; 
-  double u = rb_random_real(self);
-  d = pow((1-theta), n);
-  for (i=1; i<=m; ++i)
-    d *= (n-i+1)*s/i;
-  pu = pl = d;
-  xu = xl = m;
-  
-  for (;;) {
-    double v = u - pu;
-    //printf("u:%f pu:%e\n", u, pu);
-    if (v <= 0)
-      return INT2NUM(xu);
-    u = v;
-    for (;;) {
-      if (xl > 0) {
-        xl--;
-        pl = (b/(n-xl) - t)*pl;
-        v = u - pl;
-        if (v <= 0)
-          return INT2NUM(xl);
-        u = v;
-      } else if (xl == 0 && xu == n) {
-        return INT2NUM(n);
-      }
-      if (xu < n) {
-        ++xu;
-        pu *= a/xu - s;
-        break;
-      } else if (xu == n && xl == 0) {
-        return INT2FIX(0);
-      }
-    }
-  }
-}
-
-static double binomial_distribution(int n, int k, double theta)
-{
-  double ret = 1.0;
-  int i;
-  for (i=1; i <= k; ++i) {
-    ret *= n-k+i;
-    ret /= i;
-    ret *= theta;
-    if (i <= n - k)
-      ret *= 1 - theta;
-  }
-  for (i=0; i<n-2*k; ++i)
-    ret *= 1 - theta;
-
-  return ret;
-}
-
-static void fill_binomial_table(double p[], int n, double theta)
-{
-  int mode = ceil(theta*(n+1));
-  double s = theta/(1-theta);
-  int k;
-
-  p[mode] = binomial_distribution(n, mode, theta);
-  for (k = mode+1; k <= n; ++k) {
-    p[k] = s*((n+1)/(double)k - 1)*p[k-1];
-  }
-  for (k = mode-1; k >= 0; --k) {
-    p[k] = p[k+1]/(s*((n+1)/(double)(k+1)-1));
-  }
-}
-
-static VALUE random_binomial_table(VALUE self, VALUE num, VALUE prob)
-{
-  int n = NUM2UINT(num);
-  double theta = NUM2DBL(prob);
-  double *p = ALLOCA_N(double, n+1);
-  int *t = ALLOCA_N(int, n+1);
-  double nt;
-  int i, k, b;
-  
-  fill_binomial_table(p, n, theta);
-
-  for (k=8,, nt=0; k < 16 && (double)nt/pow2(k) < 0.9; ++k) {
-    int x;
-    nt = 0;
-    for (x=0; x<=n; ++x) {
-      t[x] = ceil(b*p[x]);
-      nt += t[x];
-    }
-  }
-  
-  return Qnil;
-}
-
 void Init_randomext_native()
 {
   VALUE cRandom = rb_const_get(rb_cObject, rb_intern("Random"));
-
+  
   rb_define_method(cRandom, "standard_normal", random_standard_normal, 0);
   rb_define_private_method(cRandom, "_gamma", random_gamma, 1);
-  rb_define_method(cRandom, "binomial1", random_binomial_inv, 2);
-  rb_define_method(cRandom, "binomial2", random_binomial_table, 2);
+  //rb_define_method(cRandom, "binomial2", random_binomial_table, 2);
+
+  randomext_binomial_init(cRandom);
   init_table();
 }

@@ -128,7 +128,7 @@ end
 
 rng = Random.new
 
-Benchmark.bm(12) do |reporter|
+Benchmark.bm(14) do |reporter|
   draw_histogram("snormal", 80, 100000, -6.0, 6.0, reporter,
                  rng.method(:standard_normal), Distribution.method(:normal))
   
@@ -168,10 +168,17 @@ Benchmark.bm(12) do |reporter|
   draw_disc_histogram("binomial1-20", 100000, reporter,
                       proc{ rng.binomial1(20, 0.45) },
                       proc{|x| Distribution.binomial(x, 20, 0.45) })
-  draw_disc_histogram("binomial1-200", 1000000, reporter,
+  draw_disc_histogram("binomial1-200", 100000, reporter,
                       proc{ rng.binomial1(200, 0.65) },
                       proc{|x| Distribution.binomial(x, 200, 0.65) })
-  # draw_disc_histogram("binomial2", 100000, reporter,
-  #                     proc{ rng.binomial2(200, 0.45) },
-  #                     proc{|x| Distribution.binomial(x, 200, 0.45) })
+
+  binomial = Random::Binomial.new(rng, 20, 0.45);
+  draw_disc_histogram("binomial2-20", 100000, reporter,
+                      proc{ binomial.rand },
+                      proc{|x| Distribution.binomial(x, 20, 0.45) })
+
+  binomial = Random::Binomial.new(rng, 200, 0.65);
+  draw_disc_histogram("binomial2-200", 100000, reporter,
+                      proc{ binomial.rand },
+                      proc{|x| Distribution.binomial(x, 200, 0.65) })
 end
