@@ -124,6 +124,10 @@ module Distribution
     return ret
     combination(n, x) * BigDecimal(p,14)**x * BigDecimal(1-p,14)**(n-x)
   end
+
+  def poisson(x, lambda)
+    exp(-(1..x).inject(0){|r, i| r+log(i)} - lambda + x*log(lambda))
+  end
 end
 
 rng = Random.new
@@ -181,4 +185,14 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("binomial2-200", 100000, reporter,
                       proc{ binomial.rand },
                       proc{|x| Distribution.binomial(x, 200, 0.65) })
+
+  draw_disc_histogram("poisson-5", 100000, reporter,
+                      proc{ rng.poisson(5.0) },
+                      proc{|x| Distribution.poisson(x, 5.0) })
+
+  draw_disc_histogram("poisson-50", 100000, reporter,
+                      proc{ rng.poisson(50.0) },
+                      proc{|x| Distribution.poisson(x, 50.0) })
 end
+
+

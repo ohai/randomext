@@ -1,6 +1,3 @@
-#include <ruby.h>
-#include <math.h>
-#include <stdint.h>
 #include "randomext.h"
 
 #define R 3.442619855899
@@ -111,6 +108,10 @@ static VALUE random_gamma(VALUE self, VALUE shape)
   }
 }
 
+
+extern void randomext_binomial_init(VALUE cRandom);
+extern void randomext_poisson_init(VALUE cRandom);
+
 void Init_randomext_native()
 {
   VALUE cRandom = rb_const_get(rb_cObject, rb_intern("Random"));
@@ -119,5 +120,6 @@ void Init_randomext_native()
   rb_define_private_method(cRandom, "_gamma", random_gamma, 1);
 
   randomext_binomial_init(cRandom);
+  randomext_poisson_init(cRandom);
   init_table();
 }

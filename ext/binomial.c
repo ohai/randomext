@@ -1,6 +1,3 @@
-#include <ruby.h>
-#include <math.h>
-#include <stdint.h>
 #include "randomext.h"
 
 #define BINOMIAL_M 64

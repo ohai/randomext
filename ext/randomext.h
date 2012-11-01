@@ -1,4 +1,6 @@
-void randomext_binomial_init(VALUE cRandom);
+#include <ruby.h>
+#include <math.h>
+#include <stdint.h>
 
 inline static uint64_t pow2(int r)
 {
