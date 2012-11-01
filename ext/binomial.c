@@ -13,7 +13,7 @@ typedef struct {
   double *V;
 } binomial_t;
 
-static double binomial_distribution(int n, int k, double theta)
+static double binomial_distribution(int k, int n, double theta)
 {
   double ret = 1.0;
   int i;
@@ -30,6 +30,18 @@ static double binomial_distribution(int n, int k, double theta)
   return ret;
 }
 
+/* Returns Bin(x+1| n, theta)/Bin(x| n, theta) */
+inline static double forward_ratio(double x, double n, double theta)
+{
+  return ((n+1)/(x+1) - 1)*(theta/(1-theta));
+}
+
+/* Returns Bin(x-1| n, theta)/Bin(x| n, theta) */
+inline static double backward_ratio(double x, double n, double theta)
+{
+  return ((n+1)/(n+1-x)-1)*((1-theta)/theta);
+}
+
 /*
  * call-seq: prng.binomial(n, theta) -> int
  *
@@ -41,44 +53,31 @@ static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
 {
   int n = NUM2INT(num);
   double theta = NUM2DBL(prob);
-  double s = theta/(1-theta);
-  double a = (n+1)*s;
-  double t = 1.0/s;
-  double b = (n+1)*t;
-  int m = ceil(theta*(n-1));
-  double d = binomial_distribution(n, m, theta);
-  double pu, pl; 
-  int xu, xl; 
+  int mode = floor(theta*(n+1));
+  int xl = mode;
+  int xu = mode+1;
+  double pl = binomial_distribution(xl, n, theta);
+  double pu = pl*forward_ratio(xl, n, theta);
   double u = rb_random_real(self);
-  pu = pl = d;
-  xu = xl = m;
   
-  for (;;) {
-    double v = u - pu;
-    //printf("u:%f pu:%e\n", u, pu);
-    if (v <= 0)
-      return INT2NUM(xu);
-    u = v;
-    for (;;) {
-      if (xl > 0) {
-        xl--;
-        pl = (b/(n-xl) - t)*pl;
-        v = u - pl;
-        if (v <= 0)
-          return INT2NUM(xl);
-        u = v;
-      } else if (xl == 0 && xu == n) {
-        return INT2NUM(n);
-      }
-      if (xu < n) {
-        ++xu;
-        pu *= a/xu - s;
-        break;
-      } else if (xu == n && xl == 0) {
-        return INT2FIX(0);
-      }
+  for (;xl >=0 || xu <= n;) {
+    if (xl >= 0) {
+      if (u <= pl)
+        return INT2NUM(xl);
+      u = u - pl;
+      pl *= backward_ratio(xl, n, theta);
+      --xl;
+    }
+    if (xu <= n) {
+      if (u <= pu)
+        return INT2NUM(xu);
+      u = u - pu;
+      pu *= forward_ratio(xu, n, theta);
+      ++xu;
     }
   }
+  
+  return INT2FIX(0);
 }
 
 static void fill_binomial_table(binomial_t *bin)
@@ -86,15 +85,14 @@ static void fill_binomial_table(binomial_t *bin)
   double theta = bin->theta;
   double n = bin->n;
   int mode = floor(theta*(n+1));
-  double s = theta/(1-theta);
   int k;
 
-  bin->p[mode] = binomial_distribution(n, mode, theta);
+  bin->p[mode] = binomial_distribution(mode, n, theta);
   for (k = mode+1; k <= n; ++k) {
-    bin->p[k] = s*((n+1)/(double)k - 1)*bin->p[k-1];
+    bin->p[k] = bin->p[k-1]*forward_ratio(k-1, n, theta);
   }
   for (k = mode-1; k >= 0; --k) {
-    bin->p[k] = bin->p[k+1]/(s*((n+1)/(double)(k+1)-1));
+    bin->p[k] = bin->p[k+1]*backward_ratio(k+1, n, theta);
   }
 }
 
