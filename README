@@ -14,8 +14,11 @@ many kinds of probability distributions such as:
   * exponential
   * gamma
   * beta
+  * chi_square
+  * F
   * Bernoulli
   * binomial
+  * Poisson
 
 = Usage
 require 'randomext' and some methods and classes are added to class Random.

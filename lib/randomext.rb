@@ -89,6 +89,15 @@ class Random
       raise ArgumentError, "r of chi_square distribution must be >= 1"
     end
   end
+
+  # Draws a random sample from F distribution.
+  #
+  # @param [Integer] r1 degree of freedom
+  # @param [Integer] r2 degree of freedom
+  def F(r1, r2)
+    f = r2 / r1.to_f
+    f*chi_square(r1)/chi_square(r2)
+  end
   
   # Draw a sample from Bernoulli distribution.
   #

@@ -113,6 +113,16 @@ module Distribution
     x**(r/2.0-1)*exp(-x/2.0)/(2**(r/2.0)*Math.gamma(r/2.0))
   end
   
+  def F(x, r1, r2)
+    r1 = r1.to_f
+    r2 = r2.to_f
+    (r1/r2)**(r1/2)*x**(r1/2-1)/(B(r1/2, r2/2)*(1+r1/r2*x)**((r1+r2)/2))
+  end
+
+  def B(a, b)
+    Math.gamma(a)*Math.gamma(b)/Math.gamma(a+b)
+  end
+  
   def combination(n ,r)
     r = n - r if n/2 < r
     ret = 1
@@ -180,7 +190,13 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("chi_square-5",100, 100000, 0.0, 20.0, reporter,
                  proc{ rng.chi_square(5) },
                  proc{|x| Distribution.chi_square(x, 5) })
-                 
+  draw_histogram("F-2-8", 100, 100000, 0.0, 10.0, reporter,
+                 proc{ rng.F(2, 8) },
+                 proc{|x| Distribution.F(x, 2, 8) })
+  draw_histogram("F-20-45", 100, 100000, 0.0, 3.5, reporter,
+                 proc{ rng.F(20, 45) },
+                 proc{|x| Distribution.F(x, 20, 45) })
+  
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })
