@@ -1,6 +1,6 @@
 #include "randomext.h"
 
-static double poisson_distribution(double lambda, int m)
+static double poisson_distribution(int m, double lambda)
 {
   int i;
   double sumlog = 0;
@@ -11,31 +11,49 @@ static double poisson_distribution(double lambda, int m)
   return exp(-lambda + m*log(lambda) - sumlog);
 }
 
+/* Returns Poi(x+1|lambda)/Poi(x|lambda) */
+static inline double forward_ratio(int x, double lambda)
+{
+  return lambda/(x+1);
+}
+
+/* Returns Poi(x-1|lambda)/Poi(x|lambda) */
+static inline double backward_ratio(int x, double lambda)
+{
+  return x/lambda;
+}
+
+/*
+ * call-seq: prng.poisson(lambda) -> int
+ *
+ * Draws a random sample from a Poisson distribution.
+ *
+ * Inverse function method is used.
+ */
 static VALUE random_poisson_inv(VALUE self, VALUE l)
 {
   double lambda = NUM2DBL(l);
   int mode = floor(lambda);
-  double d = poisson_distribution(lambda, mode);
-  double pu, pl;
-  int Xu, Xl;
-  double U = rb_random_real(self);
+  int xu = mode;
+  int xl = mode - 1;
+  double pu = poisson_distribution(mode, lambda);
+  double pl = pu * backward_ratio(xu, lambda);
+  double u = rb_random_real(self);
   
-  pu = pl = d; Xu = Xl = mode;
   for (;;) {
-    double V = U - pu;
-    if (V <= 0)
-      return INT2NUM(Xu);
+    if (u <= pu)
+      return INT2NUM(xu);
+    u = u - pu;
+    pu *= forward_ratio(xu, lambda);
+    ++xu;
 
-    U = V;
-    if (Xl > 0) {
-      pl *= Xl/lambda;
-      --Xl;
-      V = U - pl;
-      if (V <= 0)
-        return INT2NUM(Xl);
-      U = V;
+    if (xl >= 0) {
+      if (u <= pl)
+        return INT2NUM(xl);
+      u = u - pl;
+      pl *= backward_ratio(xl, lambda);
+      --xl;
     }
-    ++Xu; pu *= lambda/Xu;
   }
 }
 
