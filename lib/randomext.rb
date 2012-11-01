@@ -90,13 +90,29 @@ class Random
     end
   end
 
-  # Draws a random sample from F distribution.
+  # Draws a random sample from a F distribution.
   #
   # @param [Integer] r1 degree of freedom
   # @param [Integer] r2 degree of freedom
   def F(r1, r2)
     f = r2 / r1.to_f
     f*chi_square(r1)/chi_square(r2)
+  end
+
+  # Draws a random sample from a t distribution.
+  #
+  # @param [Integer] r degree of freedom
+  def t(r)
+    if r ==1
+      standard_cauthy
+    elsif r == 2
+      standard_normal/Math.sqrt(exponential(1))
+    elsif r > 2
+      rdiv2 = r/2.0
+      Math.sqrt(rdiv2)*standard_normal/Math.sqrt(_gamma(rdiv2))
+    else
+      raise ArgumentError, "r of t distribution must be >= 1"
+    end
   end
   
   # Draw a sample from Bernoulli distribution.

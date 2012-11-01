@@ -122,6 +122,11 @@ module Distribution
   def B(a, b)
     Math.gamma(a)*Math.gamma(b)/Math.gamma(a+b)
   end
+
+  def t(x, r)
+    r = r.to_f
+    Math.gamma((r+1)/2)/(sqrt(PI*r)*Math.gamma(r/2)*(1+x**2/r)**((r+1)/2))
+  end
   
   def combination(n ,r)
     r = n - r if n/2 < r
@@ -196,6 +201,18 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("F-20-45", 100, 100000, 0.0, 3.5, reporter,
                  proc{ rng.F(20, 45) },
                  proc{|x| Distribution.F(x, 20, 45) })
+  draw_histogram("t-1", 100, 100000, -8.0, 8.0, reporter,
+                 proc{ rng.t(1) },
+                 proc{|x| Distribution.t(x, 1) })
+  draw_histogram("t-2", 100, 100000, -8.0, 8.0, reporter,
+                 proc{ rng.t(2) },
+                 proc{|x| Distribution.t(x, 2) })
+  draw_histogram("t-5", 100, 100000, -8.0, 8.0, reporter,
+                 proc{ rng.t(5) },
+                 proc{|x| Distribution.t(x, 5) })
+  draw_histogram("t-20", 100, 100000, -8.0, 8.0, reporter,
+                 proc{ rng.t(20) },
+                 proc{|x| Distribution.t(x, 20) })
   
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
