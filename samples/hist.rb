@@ -43,8 +43,13 @@ ensure
   curve_tmp.close(true)
 end
 
+def match?(name)
+  return true if ARGV.empty?
+  ARGV.any?{|pattern| File.fnmatch?(pattern, name) }
+end
+
 def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=nil)
-  return if !ARGV.empty? && !ARGV.include?(name)
+  return unless match?(name)
   
   hist = nil
   reporter.report("#{name}:") do
@@ -61,7 +66,7 @@ def draw_histogram(name, num_bins, num_samples, min, max, reporter, gen, func=ni
 end
 
 def draw_disc_histogram(name, num_samples, reporter, gen, func)
-  return if !ARGV.empty? && !ARGV.include?(name)
+  return unless match?(name)
   
   h = Hash.new(0)
   reporter.report("#{name}:") do
