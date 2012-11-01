@@ -109,6 +109,10 @@ module Distribution
     x**(alpha-1)*(1-x)**(beta-1)/b
   end
 
+  def chi_square(x, r)
+    x**(r/2.0-1)*exp(-x/2.0)/(2**(r/2.0)*Math.gamma(r/2.0))
+  end
+  
   def combination(n ,r)
     r = n - r if n/2 < r
     ret = 1
@@ -170,6 +174,13 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(0.7, 0.42) },
                  proc{|x| Distribution.beta(x, 0.7, 0.42) })
+  draw_histogram("chi_square-1",100, 100000, 0.0, 20.0, reporter,
+                 proc{ rng.chi_square(1) },
+                 proc{|x| Distribution.chi_square(x, 1) })
+  draw_histogram("chi_square-5",100, 100000, 0.0, 20.0, reporter,
+                 proc{ rng.chi_square(5) },
+                 proc{|x| Distribution.chi_square(x, 5) })
+                 
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })

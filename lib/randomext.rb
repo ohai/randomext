@@ -77,6 +77,19 @@ class Random
     y1/(y1+y2)
   end
 
+  # Draw a random sample from a chi_square distribution.
+  #
+  # @param [Integer] r degree of freedom
+  def chi_square(r)
+    if r == 1
+      standard_normal ** 2
+    elsif r > 1
+      gamma(r*0.5, 2)
+    else
+      raise ArgumentError, "r of chi_square distribution must be >= 1"
+    end
+  end
+  
   # Draw a sample from Bernoulli distribution.
   #
   # @param p the probability returning 1 
