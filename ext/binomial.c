@@ -1,7 +1,5 @@
 #include "randomext.h"
 
-#define BINOMIAL_M 64
-
 typedef struct {
   int n;
   double theta;
@@ -127,7 +125,6 @@ static void fill_binomial_T_VT_table(binomial_t *bin)
 {
   int k, i, x;
   int nt;
-  double w;
   int *qt = ALLOC_N(int, bin->n + 2);
   double *theta = ALLOC_N(double, bin->n + 1);
   double *ntheta = ALLOC_N(double, bin->n + 1);
@@ -147,7 +144,6 @@ static void fill_binomial_T_VT_table(binomial_t *bin)
   bin->k = k;
   bin->N = pow2(k);
   bin->T = ALLOC_N(int, bin->N);
-  w = pow(2, k - BINOMIAL_M);
   for (x=0; x<=bin->n; ++x) {
     for (i=qt[x]; i<qt[x+1]; ++i)
       bin->T[i] = x;
@@ -226,7 +222,6 @@ static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
  */
 static VALUE binomial_rand(VALUE self)
 {
-  /* Assume BINOMIAL_M == 64 */
   VALUE rng = rb_iv_get(self, "rng");
   binomial_t *bin;
   uint32_t I0 = rb_random_int32(rng);
