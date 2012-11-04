@@ -140,6 +140,16 @@ class Random
     d= -1/(Math.log(1-theta))
     (d * exponential).floor + 1
   end
+
+  def negative_binomial(r, theta)
+    if r <= 0.0
+      raise ArgumentError, "Random#negative_binomial: r must be positive"
+    end
+    if theta <= 0.0 && theta >= 1.0
+      raise ArgumentError, "Random#negative_binomial: theta must be in (0, 1)"
+    end
+    poisson(gamma(r, 1/theta - 1))
+  end
   
   # Draw a sample from the uniform distribution on (0, 1)
   def rand_open_interval

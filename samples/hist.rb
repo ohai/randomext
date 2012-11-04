@@ -168,6 +168,11 @@ module Distribution
   def logcombination(n, m)
     sumlog(n-m+1, n) - sumlog(1, m)
   end
+
+  def negative_binomial(x, r, theta)
+    exp(lgamma(r+x)[0] - lgamma(r)[0] - sumlog(1, x) +
+        r*log(theta) + x*log(1-theta))
+  end
 end
 
 rng = Random.new
@@ -249,7 +254,6 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("binomial2-20", 100000, reporter,
                       proc{ binomial.rand },
                       proc{|x| Distribution.binomial(x, 20, 0.45) })
-
   binomial = Random::Binomial.new(rng, 200, 0.65);
   draw_disc_histogram("binomial2-200", 100000, reporter,
                       proc{ binomial.rand },
@@ -258,7 +262,6 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("poisson-5", 100000, reporter,
                       proc{ rng.poisson(5.0) },
                       proc{|x| Distribution.poisson(x, 5.0) })
-
   draw_disc_histogram("poisson-50", 100000, reporter,
                       proc{ rng.poisson(50.0) },
                       proc{|x| Distribution.poisson(x, 50.0) })
@@ -272,5 +275,15 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("hypergeometric-5000-1400-1000", 100000, reporter,
                       proc{ rng.hypergeometric(5000, 1400, 1000) },
                       proc{|x| Distribution.hypergeometric(x, 5000, 1400, 1000) })
+  
+  draw_disc_histogram("negative_binomial-5-0.2", 100000, reporter,
+                      proc{ rng.negative_binomial(5, 0.2) },
+                      proc{|x| Distribution.negative_binomial(x, 5, 0.2) })
+  draw_disc_histogram("negative_binomial-10-0.2", 100000, reporter,
+                      proc{ rng.negative_binomial(10, 0.2) },
+                      proc{|x| Distribution.negative_binomial(x, 10, 0.2) })
+  draw_disc_histogram("negative_binomial-0.6-0.5", 100000, reporter,
+                      proc{ rng.negative_binomial(0.6, 0.5) },
+                      proc{|x| Distribution.negative_binomial(x, 0.6, 0.5) })
 end
 
