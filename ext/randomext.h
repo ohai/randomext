@@ -3,6 +3,8 @@
 #include <stdint.h>
 
 double randomext_random_standard_normal(VALUE random);
+double randomext_sumlog(int from, int to);
+double randomext_logcombination(int n, int m);
 
 inline static uint64_t pow2(int r)
 {

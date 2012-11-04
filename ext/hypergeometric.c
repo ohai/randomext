@@ -1,59 +1,5 @@
 #include "randomext.h"
 
-#define SUMLOG_TABLE_SIZE_INIT 1024
-#define SUMLOG_TABLE_SIZE_MAX (1024*32)
-
-/* sumlog_table[0] = 0 */
-/* sumlog_table[i] = log(1) + log(2) + ... + log(i) */
-static double* sumlog_table = NULL;
-static int sumlog_table_size = -1;
-
-static inline void setup_sumlog_table(int need)
-{
-  int old_sumlog_table_size;
-  int i;
-  
-  if (sumlog_table_size > need || need >= SUMLOG_TABLE_SIZE_MAX)
-    return;
-  
-  if (sumlog_table == NULL) {
-    sumlog_table_size = SUMLOG_TABLE_SIZE_INIT;
-    sumlog_table = ALLOC_N(double, sumlog_table_size);
-    sumlog_table[0] = 0;
-    old_sumlog_table_size = 1;
-  } else {
-    old_sumlog_table_size = sumlog_table_size;
-  }
-  
-  for (;sumlog_table_size < need; sumlog_table_size <<= 1)
-    ;
-
-  REALLOC_N(sumlog_table, double, sumlog_table_size);
-
-  for (i = old_sumlog_table_size; i < sumlog_table_size; ++i) {
-    sumlog_table[i] = sumlog_table[i-1] + log(i);
-  }
-}
-
-static double sumlog(int from, int to)
-{
-  int i;
-  double ret = 0.0;
-
-  setup_sumlog_table(to);
-  if (to < SUMLOG_TABLE_SIZE_MAX)
-    return sumlog_table[to] - sumlog_table[from-1];
-  
-  for (i=from; i<=to; ++i)
-    ret += log(i);
-  return ret;
-}
-
-static double logcombination(int n, int m)
-{
-  return sumlog(n-m+1, n) - sumlog(1, m);
-}
-
 /* Returns HGeo(x+1| N, M, n)/HGeo(x| N, M, n) */
 inline static double forward_ratio(int x, int N, int M, int n)
 {
@@ -69,9 +15,9 @@ inline static double backward_ratio(int x, int N, int M, int n)
 /* Returns HGeo(x| N, M, n) */
 static inline double hypergeometric_distribution(int x, int N, int M, int n)
 {
-  return exp(logcombination(M, x)
-             + logcombination(N-M, n-x)
-             - logcombination(N, n));
+  return exp(randomext_logcombination(M, x)
+             + randomext_logcombination(N-M, n-x)
+             - randomext_logcombination(N, n));
 }
 
 static VALUE random_hypergoemtric_inv(VALUE self, VALUE vN, VALUE vM, VALUE vn)
