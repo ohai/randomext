@@ -127,6 +127,10 @@ module Distribution
     r = r.to_f
     Math.gamma((r+1)/2)/(sqrt(PI*r)*Math.gamma(r/2)*(1+x**2/r)**((r+1)/2))
   end
+
+  def logistic(x, mu, theta)
+    1.0/(4*theta*(cosh((x-mu)/(2*theta))**2))
+  end
   
   def combination(n ,r)
     r = n - r if n/2 < r
@@ -234,7 +238,11 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("t-20", 100, 100000, -8.0, 8.0, reporter,
                  proc{ rng.t(20) },
                  proc{|x| Distribution.t(x, 20) })
-  
+
+  draw_histogram("logistic", 100, 100000, -10, 10, reporter,
+                 proc{ rng.logistic(0.8, 1.2) },
+                 proc{|x| Distribution.logistic(x, 0.8, 1.2) })
+                                    
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })

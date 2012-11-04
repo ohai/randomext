@@ -121,6 +121,15 @@ class Random
       raise ArgumentError, "Random#t: r (degree of freedom) must be >= 1"
     end
   end
+
+  # Draws a random sample from a logistic distribution.
+  #
+  # @param [Float] mu the location parameter
+  # @param [Float] theta the scale parameter
+  def logistic(mu, theta)
+    u = rand_open_interval
+    mu + theta*log(u/(1-u))
+  end
   
   # Draw a sample from Bernoulli distribution.
   #
@@ -141,6 +150,10 @@ class Random
     (d * exponential).floor + 1
   end
 
+  # Draws a random sample from a negative binomial distribution.
+  #
+  # @param [Float] r positive parameter
+  # @param [Float] theta parameter in (0, 1)
   def negative_binomial(r, theta)
     if r <= 0.0
       raise ArgumentError, "Random#negative_binomial: r must be positive"
