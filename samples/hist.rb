@@ -269,5 +269,8 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("hypergeometric-500-140-100", 100000, reporter,
                       proc{ rng.hypergeometric(500, 140, 100) },
                       proc{|x| Distribution.hypergeometric(x, 500, 140, 100) })
+  draw_disc_histogram("hypergeometric-5000-1400-1000", 100000, reporter,
+                      proc{ rng.hypergeometric(5000, 1400, 1000) },
+                      proc{|x| Distribution.hypergeometric(x, 5000, 1400, 1000) })
 end
 

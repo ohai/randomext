@@ -1,17 +1,36 @@
 #include "randomext.h"
 
-#define SUMLOG_TABLE_MAX 1000
+#define SUMLOG_TABLE_SIZE_INIT 1024
+#define SUMLOG_TABLE_SIZE_MAX (1024*32)
 
 /* sumlog_table[0] = 0 */
 /* sumlog_table[i] = log(1) + log(2) + ... + log(i) */
-static double sumlog_table[SUMLOG_TABLE_MAX] = { -1.0 };
+static double* sumlog_table = NULL;
+static int sumlog_table_size = -1;
 
-static void fill_sumlog_table(void)
+static inline void setup_sumlog_table(int need)
 {
+  int old_sumlog_table_size;
   int i;
   
-  sumlog_table[0] = 0.0;
-  for (i=1; i<SUMLOG_TABLE_MAX; ++i) {
+  if (sumlog_table_size > need || need >= SUMLOG_TABLE_SIZE_MAX)
+    return;
+  
+  if (sumlog_table == NULL) {
+    sumlog_table_size = SUMLOG_TABLE_SIZE_INIT;
+    sumlog_table = ALLOC_N(double, sumlog_table_size);
+    sumlog_table[0] = 0;
+    old_sumlog_table_size = 1;
+  } else {
+    old_sumlog_table_size = sumlog_table_size;
+  }
+  
+  for (;sumlog_table_size < need; sumlog_table_size <<= 1)
+    ;
+
+  REALLOC_N(sumlog_table, double, sumlog_table_size);
+
+  for (i = old_sumlog_table_size; i < sumlog_table_size; ++i) {
     sumlog_table[i] = sumlog_table[i-1] + log(i);
   }
 }
@@ -21,12 +40,10 @@ static double sumlog(int from, int to)
   int i;
   double ret = 0.0;
 
-  if (sumlog_table[0] < 0.0)
-    fill_sumlog_table();
-  
-  if (1 <= from && to < SUMLOG_TABLE_MAX)
+  setup_sumlog_table(to);
+  if (to < SUMLOG_TABLE_SIZE_MAX)
     return sumlog_table[to] - sumlog_table[from-1];
-
+  
   for (i=from; i<=to; ++i)
     ret += log(i);
   return ret;
@@ -100,6 +117,4 @@ static VALUE random_hypergoemtric_inv(VALUE self, VALUE vN, VALUE vM, VALUE vn)
 void randomext_hypergeometric_init(VALUE cRandom)
 {
   rb_define_method(cRandom, "hypergeometric", random_hypergoemtric_inv, 3);
-
-  fill_sumlog_table();
 }
