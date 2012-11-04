@@ -10,4 +10,6 @@ inline static uint64_t pow2(int r)
 #define MASK(bits) (~(~0<<(bits)))
 #define BIT(nth) (1<<(nth))
 
+#define MAX2(n, m) (((n) < (m)) ? (m) : (n))
+#define MIN2(n, m) (((n) < (m)) ? (n) : (m))
 

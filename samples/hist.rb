@@ -149,8 +149,24 @@ module Distribution
     combination(n, x) * BigDecimal(p,14)**x * BigDecimal(1-p,14)**(n-x)
   end
 
+  def geometric(x, theta)
+    theta*(1-theta)**(x-1)
+  end
+  
   def poisson(x, lambda)
     exp(-(1..x).inject(0){|r, i| r+log(i)} - lambda + x*log(lambda))
+  end
+
+  def hypergeometric(x, n, m, k)
+    exp(logcombination(m, x) + logcombination(n-m, k-x) - logcombination(n, k))
+  end
+  
+  def sumlog(from, to)
+    (from .. to).inject(0.0){|r, i| r + Math.log(i)}
+  end
+  
+  def logcombination(n, m)
+    sumlog(n-m+1, n) - sumlog(1, m)
   end
 end
 
@@ -225,6 +241,10 @@ Benchmark.bm(14) do |reporter|
                       proc{ rng.binomial(200, 0.65) },
                       proc{|x| Distribution.binomial(x, 200, 0.65) })
 
+  draw_disc_histogram("geometric", 100000, reporter,
+                      proc{ rng.geometric(0.1) },
+                      proc{|x| Distribution.geometric(x, 0.1) })
+  
   binomial = Random::Binomial.new(rng, 20, 0.45);
   draw_disc_histogram("binomial2-20", 100000, reporter,
                       proc{ binomial.rand },
@@ -242,6 +262,12 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("poisson-50", 100000, reporter,
                       proc{ rng.poisson(50.0) },
                       proc{|x| Distribution.poisson(x, 50.0) })
-end
 
+  draw_disc_histogram("hypergeometric-50-14-10", 100000, reporter,
+                      proc{ rng.hypergeometric(50, 14, 10) },
+                      proc{|x| Distribution.hypergeometric(x, 50, 14, 10) })
+  draw_disc_histogram("hypergeometric-500-140-100", 100000, reporter,
+                      proc{ rng.hypergeometric(500, 140, 100) },
+                      proc{|x| Distribution.hypergeometric(x, 500, 140, 100) })
+end
 

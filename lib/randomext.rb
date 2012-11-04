@@ -117,9 +117,17 @@ class Random
   
   # Draw a sample from Bernoulli distribution.
   #
-  # @param p the probability returning 1 
+  # @param [Float] p the probability returning 1 
   def bernoulli(p)
     (rand < p) ? 1 : 0
+  end
+
+  # Draws a random sample from a geometric distribution.
+  #
+  # @param [Float] theta the probability of sucess
+  def geometric(theta)
+    d= -1/(Math.log(1-theta))
+    (d * exponential).floor + 1
   end
   
   # Draw a sample from the uniform distribution on (0, 1)

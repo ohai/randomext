@@ -111,6 +111,7 @@ static VALUE random_gamma(VALUE self, VALUE shape)
 
 extern void randomext_binomial_init(VALUE cRandom);
 extern void randomext_poisson_init(VALUE cRandom);
+extern void randomext_hypergeometric_init(VALUE cRandom);
 
 void Init_randomext_native()
 {
@@ -121,5 +122,6 @@ void Init_randomext_native()
 
   randomext_binomial_init(cRandom);
   randomext_poisson_init(cRandom);
+  randomext_hypergeometric_init(cRandom);
   init_table();
 }
