@@ -2,13 +2,7 @@
 
 static double poisson_distribution(int m, double lambda)
 {
-  int i;
-  double sumlog = 0;
-  
-  for (i=1; i<=m; i++)
-    sumlog += log(i);
-
-  return exp(-lambda + m*log(lambda) - sumlog);
+  return exp(-lambda + m*log(lambda) - randomext_sumlog(1, m));
 }
 
 /* Returns Poi(x+1|lambda)/Poi(x|lambda) */
