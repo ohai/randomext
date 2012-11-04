@@ -40,6 +40,14 @@ inline static double backward_ratio(double x, double n, double theta)
   return ((n+1)/(n+1-x)-1)*((1-theta)/theta);
 }
 
+static void check_binomial_params(int n, double theta, const char* method_name)
+{
+  if (n < 1)
+    rb_raise(rb_eArgError, "%s: n must be >= 1", method_name);
+  if (theta <= 0.0 || 1.0 <= theta)
+    rb_raise(rb_eArgError, "%s: n must be in (0, 1)", method_name);
+  
+}
 /*
  * call-seq: prng.binomial(n, theta) -> int
  *
@@ -57,6 +65,8 @@ static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
   double pl = binomial_distribution(xl, n, theta);
   double pu = pl*forward_ratio(xl, n, theta);
   double u = rb_random_real(self);
+
+  check_binomial_params(n, theta, "Random#binomial");
   
   for (;xl >=0 || xu <= n;) {
     if (xl >= 0) {
@@ -201,11 +211,15 @@ static VALUE binomial_alloc(VALUE klass)
 static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
 {
   binomial_t *bin;
+  int n = NUM2INT(num);
+  double theta = NUM2DBL(prob);
+
+  check_binomial_params(n, theta, "Random::Binomial.new");
   
   rb_iv_set(self, "rng", rng);
   Data_Get_Struct(self, binomial_t, bin);
-  bin->n = NUM2UINT(num);
-  bin->theta = NUM2DBL(prob);
+  bin->n = n;
+  bin->theta = theta;
   bin->p = ALLOC_N(double, bin->n + 1);
 
   fill_binomial_table(bin);

@@ -80,20 +80,24 @@ static VALUE random_hypergoemtric_inv(VALUE self, VALUE vN, VALUE vM, VALUE vn)
   int M = NUM2INT(vM);
   int n = NUM2INT(vn);
   int ok = (N >= 0) && (M >= 0) && (n >= 0) && (M <= N) && (n <= N);
-  int mode = (M+1)*(n+1) / (N+2);
-  int x_min = MAX2(0, n - (N-M));
-  int x_max = MIN2(n, M);
-  int xu = mode;
-  double pu = hypergeometric_distribution(mode, N, M, n);
-  int xl = mode-1;
-  double pl = pu * backward_ratio(mode, N, M, n);
-  double u = rb_random_real(self);
-
+  int mode, x_min, x_max, xu, xl;
+  double pl, pu;
+  double u;
+  
   if (!ok)
     rb_raise(rb_eArgError,
-             "Paramters of hypergeometric distribution must be:"
+             "Random#hypergeometric: paramters must be:"
              "(N >= 0) && (M >= 0) && (n >= 0) && (M <= N) && (n <= N)");
-  
+
+  mode = (M+1)*(n+1) / (N+2);
+  x_min = MAX2(0, n - (N-M));
+  x_max = MIN2(n, M);
+  xu = mode;
+  pu = hypergeometric_distribution(mode, N, M, n);
+  xl = mode-1;
+  pl = pu * backward_ratio(mode, N, M, n);
+  u = rb_random_real(self);
+
   for (;x_min <= xl || xu <= x_max;) {
     if (xu <= x_max) {
       if (u <= pu)

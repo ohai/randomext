@@ -92,8 +92,13 @@ inline static double random_open_interval(VALUE random)
 
 static VALUE random_gamma(VALUE self, VALUE shape)
 {
-  double d = NUM2DBL(shape) - 1.0/3.0;
-  double c = 1/sqrt(9*d);
+  double c, d;
+  
+  if (NUM2DBL(shape) < 1.0)
+    rb_raise(rb_eArgError, "Random#_gamma: shape parameter must be >= 1.0");
+  
+  d = NUM2DBL(shape) - 1.0/3.0;
+  c = 1/sqrt(9*d);
 
   for (;;) {
     double z, v, y, w, u;

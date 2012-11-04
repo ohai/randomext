@@ -51,6 +51,9 @@ class Random
   # Inverse function method is used.
   # @param [Float] scale scale parameter
   def exponential(scale=1.0)
+    if scale < 0.0
+      raise ArgumentError, "Random#exponential: scale parameter must be positive"
+    end
     -scale * Math.log(1-rand)
   end
 
@@ -59,9 +62,13 @@ class Random
   # @param [Float] shape shape parameter
   # @param [Float] scale scale parameter
   def gamma(shape, scale=1.0)
+    if scale <= 0.0
+      raise ArgumentError, "Random#gamma: scale parameter must be positive"
+    end
+    
     case
     when shape <= 0.0
-      raise ArgumentError, "Random#gamma: shape parameter should be positive"
+      raise ArgumentError, "Random#gamma: shape parameter must be positive"
     when shape > 1.0
       scale * _gamma(shape)
     when shape == 1.0
@@ -86,7 +93,7 @@ class Random
     elsif r > 1
       gamma(r*0.5, 2)
     else
-      raise ArgumentError, "r of chi_square distribution must be >= 1"
+      raise ArgumentError, "Random#chi_square:r (degree of freedom) must be >= 1"
     end
   end
 
@@ -111,7 +118,7 @@ class Random
       rdiv2 = r/2.0
       Math.sqrt(rdiv2)*standard_normal/Math.sqrt(_gamma(rdiv2))
     else
-      raise ArgumentError, "r of t distribution must be >= 1"
+      raise ArgumentError, "Random#t: r (degree of freedom) must be >= 1"
     end
   end
   
@@ -126,6 +133,10 @@ class Random
   #
   # @param [Float] theta the probability of sucess
   def geometric(theta)
+    if theta <= 0.0 || theta >= 1.0
+      raise ArgumentError, "Random#geometric: theta should be in (0, 1)"
+    end
+    
     d= -1/(Math.log(1-theta))
     (d * exponential).floor + 1
   end

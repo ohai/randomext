@@ -33,12 +33,18 @@ static inline double backward_ratio(int x, double lambda)
 static VALUE random_poisson_inv(VALUE self, VALUE l)
 {
   double lambda = NUM2DBL(l);
-  int mode = floor(lambda);
-  int xu = mode;
-  int xl = mode - 1;
-  double pu = poisson_distribution(mode, lambda);
-  double pl = pu * backward_ratio(xu, lambda);
-  double u = rb_random_real(self);
+  int mode, xu, xl;
+  double pu, pl, u;
+  
+  if (lambda <= 0.0)
+    rb_raise(rb_eArgError, "Random#poisson: lambda must be positive");
+
+  mode = floor(lambda);
+  xu = mode;
+  xl = mode - 1;
+  pu = poisson_distribution(mode, lambda);
+  pl = pu * backward_ratio(xu, lambda);
+  u = rb_random_real(self);
   
   for (;;) {
     if (u <= pu)
