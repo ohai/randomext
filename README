@@ -14,11 +14,17 @@ many kinds of probability distributions such as:
   * exponential
   * gamma
   * beta
+  * power
   * chi_square
   * F
+  * t
+  * Pareto
+  * logistic
   * Bernoulli
   * binomial
   * Poisson
+  * geometric
+  * negative_binomial
 
 = Usage
 require 'randomext' and some methods and classes are added to class Random.

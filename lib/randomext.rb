@@ -1,7 +1,7 @@
 require 'randomext_native'
 
 class Random
-  # Draw a random sample from a normal(Gaussian) distribution.
+  # Draws a random sample from a normal(Gaussian) distribution.
   #
   # @param [Float] mean mean
   # @param [Float] sd standard deviarion
@@ -9,7 +9,7 @@ class Random
     mean + standard_normal()*sd
   end
 
-  # Draw a random sample from a log normal distribution.
+  # Draws a random sample from a log normal distribution.
   #
   # The lognormal distribution with parameters mu and sigma
   # is defined:
@@ -20,7 +20,7 @@ class Random
     Math.exp(normal(mu, sigma))
   end
 
-  # Draw a random sample from a Cauthy distribution.
+  # Draws a random sample from a Cauthy distribution.
   #
   # @param [Float] loc location parameter
   # @param [Float] scale scale parameter
@@ -28,7 +28,7 @@ class Random
     loc + scale*standard_cauthy()
   end
 
-  # Draw a random sample from the standard Cauthy distribution.
+  # Draws a random sample from the standard Cauthy distribution.
   #
   # Computed using Polar method from the standard normal distribution.
   def standard_cauthy
@@ -37,7 +37,7 @@ class Random
     return y1/y2
   end
 
-  # Draw a random sample from a Levy distribution.
+  # Draws a random sample from a Levy distribution.
   #
   # @param [Float] loc location parameter
   # @param [Float] scale scale parameter
@@ -46,7 +46,7 @@ class Random
     loc + scale/z**2
   end
 
-  # Draw a random sample from a exponential distribution.
+  # Draws a random sample from a exponential distribution.
   #
   # Inverse function method is used.
   # @param [Float] scale scale parameter
@@ -57,7 +57,7 @@ class Random
     scale * standard_exponential
   end
 
-  # Draw a random sample from a gamma distribution
+  # Draws a random sample from a gamma distribution
   #
   # @param [Float] shape shape parameter
   # @param [Float] scale scale parameter
@@ -78,7 +78,10 @@ class Random
     end
   end
 
-  # Draw a sample from a beta distribution.
+  # Draws a random sample from a beta distribution.
+  #
+  # @param [Float] alpha a shape parameter
+  # @param [Float] beta another shape parameter
   def beta(alpha, beta)
     y1 = gamma(alpha); y2 = gamma(beta)
     y1/(y1+y2)
