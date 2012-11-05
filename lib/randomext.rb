@@ -174,8 +174,7 @@ class Random
 
   # Draws a random sample from a Pareto distribution.
   #
-  # The probabilistic mass function for the Pareto distribution
-  # with parameters a and b is defined as:
+  # The probabilistic mass function for the distribution is defined as:
   #   p(x) = a*b**a/x**(a+1)
   #
   # @param [Float] a shape parameter
