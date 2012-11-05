@@ -54,7 +54,7 @@ class Random
     if scale < 0.0
       raise ArgumentError, "Random#exponential: scale parameter must be positive"
     end
-    -scale * Math.log(1-rand)
+    scale * standard_exponential
   end
 
   # Draw a random sample from a gamma distribution
@@ -174,7 +174,7 @@ class Random
     end
     
     d= -1/(Math.log(1-theta))
-    (d * exponential).floor + 1
+    (d * standard_exponential).floor + 1
   end
 
   # Draws a random sample from a negative binomial distribution.

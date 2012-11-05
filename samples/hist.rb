@@ -210,6 +210,9 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("exponential", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.exponential(1.3) },
                  proc{|x| Distribution.exponential(x, 1.3) })
+  draw_histogram("standard_exponential", 100, 100000, 0.0, 10.0, reporter,
+                 proc{ rng.standard_exponential },
+                 proc{|x| Distribution.exponential(x, 1.0) })
   draw_histogram("gamma", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.gamma(2.0, 1.0) },
                  proc{|x| Distribution.gamma(x, 2.0, 1.0) })
