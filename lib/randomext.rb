@@ -84,6 +84,18 @@ class Random
     y1/(y1+y2)
   end
 
+  # Draws a random sample from a power function distribution
+  #
+  # @param [Float] shape shape parameter
+  # @param [Float] a lower boundary parameter
+  # @param [Float] b upper boundary parameter
+  def power(shape, a, b)
+    if shape <= 0 || a >= b
+      raise ArgumentError, "Random#power: shape must be positive, and b should be greater than a"
+    end
+    
+    a + (b-a)*(rand_open_interval**(1/shape))
+  end
   # Draw a random sample from a chi_square distribution.
   #
   # @param [Integer] r degree of freedom
@@ -122,6 +134,21 @@ class Random
     end
   end
 
+  # Draws a random sample from a Pareto distribution.
+  #
+  # The probabilistic mass function for the Pareto distribution
+  # with parameters a and b is defined as:
+  #   p(x) = a*b**a/x**(a+1)
+  #
+  # @param [Float] a shape parameter
+  # @param [Float] b scale parameter
+  def pareto(a, b=1.0)
+    if a <= 0 || b <= 0
+      raise ArgumentError, "Random#pareto: parameters a and b must be positive"
+    end
+    b * (1.0 - rand)**(-1/a)
+  end
+  
   # Draws a random sample from a logistic distribution.
   #
   # @param [Float] mu the location parameter

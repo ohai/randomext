@@ -109,6 +109,10 @@ module Distribution
     x**(alpha-1)*(1-x)**(beta-1)/b
   end
 
+  def power(x, gamma, a, b)
+    gamma*(x-a)**(gamma-1)/(b-a)**gamma
+  end
+  
   def chi_square(x, r)
     x**(r/2.0-1)*exp(-x/2.0)/(2**(r/2.0)*Math.gamma(r/2.0))
   end
@@ -128,6 +132,10 @@ module Distribution
     Math.gamma((r+1)/2)/(sqrt(PI*r)*Math.gamma(r/2)*(1+x**2/r)**((r+1)/2))
   end
 
+  def pareto(x, a, b)
+    a*b**a/x**(a+1)
+  end
+  
   def logistic(x, mu, theta)
     1.0/(4*theta*(cosh((x-mu)/(2*theta))**2))
   end
@@ -214,6 +222,12 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(0.7, 0.42) },
                  proc{|x| Distribution.beta(x, 0.7, 0.42) })
+  draw_histogram("power-4", 100, 100000, 0.0, 1.0, reporter,
+                 proc{ rng.power(4.0, 0.0, 1.0) },
+                 proc{|x| Distribution.power(x, 4.0, 0.0, 1.0) })
+  draw_histogram("power-0.5", 100, 100000, 0.0, 1.0, reporter,
+                 proc{ rng.power(0.5, 0.0, 1.0) },
+                 proc{|x| Distribution.power(x, 0.5, 0.0, 1.0) })
   draw_histogram("chi_square-1",100, 100000, 0.0, 20.0, reporter,
                  proc{ rng.chi_square(1) },
                  proc{|x| Distribution.chi_square(x, 1) })
@@ -239,10 +253,14 @@ Benchmark.bm(14) do |reporter|
                  proc{ rng.t(20) },
                  proc{|x| Distribution.t(x, 20) })
 
+  draw_histogram("pareto1-4.5", 100, 100000, 1.0, 4.0, reporter,
+                 proc{ rng.pareto(4.5, 1) },
+                 proc{|x| Distribution.pareto(x, 4.5, 1) })
+  
   draw_histogram("logistic", 100, 100000, -10, 10, reporter,
                  proc{ rng.logistic(0.8, 1.2) },
                  proc{|x| Distribution.logistic(x, 0.8, 1.2) })
-                                    
+  
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })
