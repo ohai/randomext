@@ -148,6 +148,10 @@ module Distribution
     Math.gamma((r+1)/2)/(sqrt(PI*r)*Math.gamma(r/2)*(1+x**2/r)**((r+1)/2))
   end
 
+  def wald(x, mu, lambda)
+    Math.sqrt(lambda/(2*PI*x**3))*exp(-lambda*(x-mu)**2/(2*mu**2*x))
+  end
+  
   def pareto(x, a, b)
     a*b**a/x**(a+1)
   end
@@ -283,7 +287,9 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("t-20", 100, 100000, -8.0, 8.0, reporter,
                  proc{ rng.t(20) },
                  proc{|x| Distribution.t(x, 20) })
-
+  draw_histogram("wald", 100, 100000, 0.0, 3.0, reporter,
+                 proc{ rng.wald(2.0, 1.2) },
+                 proc{|x| Distribution.wald(x, 2.0, 1.2) })
   draw_histogram("pareto1-4.5", 100, 100000, 1.0, 4.0, reporter,
                  proc{ rng.pareto(4.5, 1) },
                  proc{|x| Distribution.pareto(x, 4.5, 1) })

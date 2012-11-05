@@ -172,6 +172,17 @@ class Random
     end
   end
 
+  def wald(mean, shape)
+    p = mean**2
+    q = p/(2*shape)
+    z = standard_normal
+    return mean if z == 0.0
+    v = mean + q*z**2
+    x1 = v + Math.sqrt(v**2-p)
+    return x1 if rand*(x1 + mean) <= mean
+    return p/x1
+  end
+  
   # Draws a random sample from a Pareto distribution.
   #
   # The probabilistic mass function for the distribution is defined as:
