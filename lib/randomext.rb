@@ -57,6 +57,41 @@ class Random
     scale * standard_exponential
   end
 
+  # Draws a random sample from a Laplace distribution
+  #
+  # @param [Float] loc location parameter
+  # @param [Float] scale scale parameter
+  def laplace(loc=0.0, scale=1.0)
+    sign = rand(2) == 1 ? 1 : -1
+    loc + sign*scale*standard_exponential
+  end
+
+  # Draws a random sample from a Rayleigh distribution
+  #
+  # @param [Float] sigma scale parameter
+  def rayleigh(sigma=1.0)
+    sigma*Math.sqrt(2*standard_exponential)
+  end
+
+  # Draws a random sample from a Weibull distribution
+  #
+  # @param [Float] g shape parameter
+  # @param [Float] mu scale parameter
+  def weibull(g, mu=1.0)
+    if g <= 0
+      raise ArgumentError, "Random#weibull: shape parameter must be positive"
+    end
+    mu * standard_exponential**(1.0/g)
+  end
+
+  # Draws a random sample from a Gumbel distribution
+  #
+  # @param [Float] loc location parameter
+  # @param [Float] scale scale parameter
+  def gumbel(loc=0.0, scale=1.0)
+    loc - scale * Math.log(standard_exponential)
+  end
+  
   # Draws a random sample from a gamma distribution
   #
   # @param [Float] shape shape parameter

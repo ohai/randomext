@@ -100,6 +100,22 @@ module Distribution
     exp(-x/theta)/theta
   end
 
+  def laplace(x, mu, theta)
+    exp(-(x-mu).abs/theta)/(2*theta)
+  end
+
+  def rayleigh(x, sigma)
+    x/sigma**2*exp(-x**2/(2*sigma**2))
+  end
+
+  def weibull(x, g, mu)
+    g/mu*(x/mu)**(g-1)*exp(-(x/mu)**g)
+  end
+
+  def gumbel(x, mu, nu)
+    1/nu*exp(-(x-mu)/nu)*exp(-exp(-(x-mu)/nu))
+  end
+  
   def gamma(x, alpha, beta)
     beta**(-alpha)*x**(alpha-1)*exp(-x/beta)/Math.gamma(alpha)
   end
@@ -213,6 +229,18 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("standard_exponential", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.standard_exponential },
                  proc{|x| Distribution.exponential(x, 1.0) })
+  draw_histogram("laplace", 100, 100000, -6.0, 6.0, reporter,
+                 proc{ rng.laplace(0, 1) },
+                 proc{|x| Distribution.laplace(x, 0, 1)})
+  draw_histogram("rayleigh", 100, 100000, 0.0, 5.0, reporter,
+                 proc{ rng.rayleigh(1.2) },
+                 proc{|x| Distribution.rayleigh(x, 1.2) })
+  draw_histogram("weibull", 100, 100000, 0.0, 5.0, reporter,
+                 proc{ rng.weibull(3.0, 1) },
+                 proc{|x| Distribution.weibull(x, 3.0, 1) })
+  draw_histogram("gumbel", 100, 100000, -4.0, 8.0, reporter,
+                 proc{ rng.gumbel(0, 1) },
+                 proc{|x| Distribution.gumbel(x, 0, 1) })
   draw_histogram("gamma", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.gamma(2.0, 1.0) },
                  proc{|x| Distribution.gamma(x, 2.0, 1.0) })
