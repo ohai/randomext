@@ -1,5 +1,42 @@
 #include "randomext.h"
 
+static VALUE random_vonmises(VALUE self, VALUE vmu, VALUE vkappa)
+{
+  double mu = NUM2DBL(vmu);
+  double kappa = NUM2DBL(vkappa);
+  double s;
+  
+  if (kappa <= 0)
+    rb_raise(rb_eArgError, "Random#vonmises: parameter kappa must be positive");
+  
+  s = (1 + sqrt(1+4*kappa*kappa))/(2*kappa);
+  
+  for (;;) {
+    double u = rb_random_real(self);
+    double z = cos(2*M_PI*u);
+    double W = (1-s*z)/(s-z);
+    double T = kappa*(s-W);
+    double U = rb_random_real(self);
+    double V = rb_random_real(self);
+    double x, y;
+    
+    if (V > T*(2-T) && V > T*exp(1-T))
+      continue;
+
+    if (U < 0.5)
+      y = -acos(W);
+    else
+      y = acos(W);
+    x = y + mu;
+    if (x >= M_PI)
+      return DBL2NUM(x - M_PI);
+    else if (x < -M_PI)
+      return DBL2NUM(x + M_PI);
+    else
+      return DBL2NUM(x);
+  }
+}
+
 static VALUE random_zipf(int argc, VALUE *argv, VALUE self)
 {
   VALUE vN, vs, vq;
@@ -51,6 +88,7 @@ static VALUE random_zeta(VALUE self, VALUE vs)
 
 void randomext_other_init(VALUE cRandom)
 {
+  rb_define_method(cRandom, "vonmises", random_vonmises, 2);
   rb_define_method(cRandom, "zipf_mandelbrot", random_zipf, -1);
   rb_define_method(cRandom, "zeta", random_zeta, 1);
 }

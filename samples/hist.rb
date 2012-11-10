@@ -5,6 +5,11 @@ require 'bigdecimal'
 
 include Math
 
+module Enumerable
+  def sum
+    inject(0){|r, i| r+i }
+  end
+end
 
 def histogram(num_bins, num_samples, min, max, gen)
   binsize = (max - min).to_f / num_bins
@@ -161,6 +166,14 @@ module Distribution
   def logistic(x, mu, theta)
     1.0/(4*theta*(cosh((x-mu)/(2*theta))**2))
   end
+
+  def vonmises(x, mu, kappa)
+    i0 = 1 + (1..100).inject(0){|r, i|
+      l = -2*sumlog(1, i) + 2*i*log(kappa/2)
+      r + exp(l)
+    } 
+    exp(kappa*cos(x-mu))/(2*PI*i0)
+  end
   
   def combination(n ,r)
     r = n - r if n/2 < r
@@ -313,6 +326,12 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("logistic", 100, 100000, -10, 10, reporter,
                  proc{ rng.logistic(0.8, 1.2) },
                  proc{|x| Distribution.logistic(x, 0.8, 1.2) })
+  draw_histogram("vonmises-0.2", 80, 100000, -PI, PI, reporter,
+                 proc{ rng.vonmises(0.0, 0.2) },
+                 proc{|x| Distribution.vonmises(x, 0.0, 0.2) })
+  draw_histogram("vonmises-16", 100, 100000, -PI, PI, reporter,
+                 proc{ rng.vonmises(0.0, 16) },
+                 proc{|x| Distribution.vonmises(x, 0.0, 16) })
   
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
