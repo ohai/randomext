@@ -75,6 +75,8 @@ def draw_disc_histogram(name, num_samples, reporter, gen, func)
   hist = h.map{|k, v| [k, v.to_f/num_samples] }.sort_by{|k, v| k }
   curve = hist.map{|x, _| [x, func[x]] }
 
+  p hist
+  
   plot("#{name}.png", hist, curve, "points")
 end
 
@@ -204,6 +206,20 @@ module Distribution
   def negative_binomial(x, r, theta)
     exp(lgamma(r+x)[0] - lgamma(r)[0] - sumlog(1, x) +
         r*log(theta) + x*log(1-theta))
+  end
+
+  def zipf_mandelbrot(x, n, q=0.0, s=1.0)
+    sum = (1..n).inject(0.0){|r, i| r + 1.0/(i+q)**s }
+    1.0 / (x+q)**s / sum
+  end
+
+  def zeta(x, s)
+    x**(-s)/Zeta(s)
+  end
+
+  # Riemann's zeta function
+  def Zeta(s)
+    (1..100).inject(0){|r, n| r + n**(-s) }
   end
 end
 
@@ -348,5 +364,11 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("negative_binomial-0.6-0.5", 100000, reporter,
                       proc{ rng.negative_binomial(0.6, 0.5) },
                       proc{|x| Distribution.negative_binomial(x, 0.6, 0.5) })
+  draw_disc_histogram("zipf_mandelbrot", 100000, reporter,
+                      proc{ rng.zipf_mandelbrot(20, 2.1, 1.9) },
+                      proc{|x| Distribution.zipf_mandelbrot(x, 20, 2.1, 1.9) })
+  draw_histogram("zeta", 20, 100000, 0.5, 20.5, reporter,
+                 proc{ rng.zeta(2) },
+                 proc{|x| Distribution.zeta(x, 2) })
 end
 

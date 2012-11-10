@@ -29,6 +29,8 @@ many kinds of probability distributions such as:
   * Poisson
   * geometric
   * negative_binomial
+  * zipf_mandelbrot
+  * zeta
 
 = Usage
 require 'randomext' and some methods and classes are added to class Random.

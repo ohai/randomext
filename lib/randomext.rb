@@ -238,7 +238,21 @@ class Random
     end
     poisson(gamma(r, 1/theta - 1))
   end
-  
+
+=begin  
+  def zeta(s)
+    q = (s - 1).to_f
+    r = -1/q
+    t = 2**q
+    loop do
+      u = rand_open_interval
+      v = rand_open_interval
+      x = (u**r).floor
+      w = (1+1.0/x)**q
+      return x if v*x*(w-1.0)*t <= w*(t-1)
+    end
+  end
+=end
   # Draw a sample from the uniform distribution on (0, 1)
   def rand_open_interval
     begin; x = rand; end until x != 0.0

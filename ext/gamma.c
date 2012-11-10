@@ -1,13 +1,5 @@
 #include "randomext.h"
 
-inline static double random_open_interval(VALUE random)
-{
-  for (;;) {
-    double u = rb_random_real(random);
-    if (u != 0.0) return u;
-  }
-}
-
 static VALUE random_gamma(VALUE self, VALUE shape)
 {
   double c, d;

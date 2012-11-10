@@ -11,6 +11,14 @@ inline static uint64_t pow2(int r)
   return (uint64_t)1<<r;
 }
 
+inline static double random_open_interval(VALUE random)
+{
+  for (;;) {
+    double u = rb_random_real(random);
+    if (u != 0.0) return u;
+  }
+}
+
 #define MASK(bits) (~(~0<<(bits)))
 #define BIT(nth) (1<<(nth))
 
