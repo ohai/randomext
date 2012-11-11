@@ -80,8 +80,6 @@ def draw_disc_histogram(name, num_samples, reporter, gen, func)
   hist = h.map{|k, v| [k, v.to_f/num_samples] }.sort_by{|k, v| k }
   curve = hist.map{|x, _| [x, func[x]] }
 
-  p hist
-  
   plot("#{name}.png", hist, curve, "points")
 end
 
@@ -221,6 +219,10 @@ module Distribution
         r*log(theta) + x*log(1-theta))
   end
 
+  def logseries(x, theta)
+    -1/log(1-theta)*theta**x/x
+  end
+  
   def zipf_mandelbrot(x, n, q=0.0, s=1.0)
     sum = (1..n).inject(0.0){|r, i| r + 1.0/(i+q)**s }
     1.0 / (x+q)**s / sum
@@ -383,6 +385,12 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("negative_binomial-0.6-0.5", 100000, reporter,
                       proc{ rng.negative_binomial(0.6, 0.5) },
                       proc{|x| Distribution.negative_binomial(x, 0.6, 0.5) })
+  draw_disc_histogram("logseries-0.6", 100000, reporter,
+                      proc{ rng.logseries(0.6) },
+                      proc{|x| Distribution.logseries(x, 0.6) })
+  draw_disc_histogram("logseries-0.95", 100000, reporter,
+                      proc{ rng.logseries(0.95) },
+                      proc{|x| Distribution.logseries(x, 0.95) })
   draw_disc_histogram("zipf_mandelbrot", 100000, reporter,
                       proc{ rng.zipf_mandelbrot(20, 2.1, 1.9) },
                       proc{|x| Distribution.zipf_mandelbrot(x, 20, 2.1, 1.9) })

@@ -239,6 +239,20 @@ class Random
     poisson(gamma(r, 1/theta - 1))
   end
 
+  # Draws a random sample from a log series distribution.
+  #
+  # @param [Float] theta a parameter
+  def logseries(theta)
+    q = 1 - theta
+    v = rand_open_interval
+    if v >= theta
+      1
+    else
+      u = rand_open_interval
+      (log(v)/log(1-q**u)).ceil
+    end
+  end
+  
   # Draw a sample from the uniform distribution on (0, 1)
   def rand_open_interval
     begin; x = rand; end until x != 0.0
