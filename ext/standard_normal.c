@@ -77,11 +77,11 @@ double randomext_random_standard_normal(VALUE random)
 }
 
 /*
- * call-seq: prng.standard_normal() -> float
- *
  * Draws a random sample from the standard normal distribution.
  *
  * Ziggurat method is used for random sampling.
+ * 
+ * @return [Float] a random sample 
  */
 static VALUE random_standard_normal(VALUE self)
 {

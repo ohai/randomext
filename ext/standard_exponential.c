@@ -63,6 +63,11 @@ retry:
   }
 }
 
+/*
+ * Draws a random sample from the standard exponential distribution.
+ *
+ * @return [Float] a random sample
+ */
 static VALUE random_standard_exp(VALUE self)
 {
   return DBL2NUM(standard_exponential(self));

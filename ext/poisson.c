@@ -18,11 +18,13 @@ static inline double backward_ratio(int x, double lambda)
 }
 
 /*
- * call-seq: prng.poisson(lambda) -> int
- *
  * Draws a random sample from a Poisson distribution.
  *
  * Inverse function method is used.
+ *
+ * @overload poisson(lambda)
+ * @param [Float] lambda mean
+ * @return [Integer] a random sample in [0, INFINITY)
  */
 static VALUE random_poisson_inv(VALUE self, VALUE l)
 {

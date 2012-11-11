@@ -1,5 +1,8 @@
 #include "randomext.h"
 
+/*
+ * @private
+ */
 static VALUE random_gamma(VALUE self, VALUE shape)
 {
   double c, d;

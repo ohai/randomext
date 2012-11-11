@@ -49,11 +49,14 @@ static void check_binomial_params(int n, double theta, const char* method_name)
   
 }
 /*
- * call-seq: prng.binomial(n, theta) -> int
- *
  * Draws a random sample from a binomial distribution
  *
  * Inverse function method is used.
+ *
+ * @overload binomial(n, theta)
+ * @param [Integer] n the number of trials (n > 0)
+ * @param [Float] theta success probability (0 < theta < 1)
+ * @return [Integer] a random sample in 0..n
  */
 static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
 {
@@ -195,8 +198,6 @@ static VALUE binomial_alloc(VALUE klass)
 }
 
 /*
- * call-seq: Random::Binomial.new(rng, n, theta) -> binomial
- *
  * Returns a random sampler from a binomial distribution.
  *
  * This sampler uses table plus square histgram method with
@@ -207,6 +208,12 @@ static VALUE binomial_alloc(VALUE klass)
  * if you need to draw many samples from the same binomial distribution,
  * you had better to use this class. Otherwise, you should use
  * Random#binomial.
+ *
+ * @overload initialize(rng, n, theta)
+ * @param [Random] rng a random number generator
+ * @param [Integer] n the number of trials (n > 0)
+ * @param [Float] theta success probability (0 < theta < 1)
+ * @return [Random::Binomial] a random number generator from the specified binomial distribution
  */
 static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
 {
@@ -229,10 +236,10 @@ static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
 }
 
 /*
- * call-seq: binomial.rand
- *
  * Draws a sample from the binomimial distribution whose parameters
  * are specified in Random::Binomial.new.
+ *
+ * @return [Integer] a random sample
  */
 static VALUE binomial_rand(VALUE self)
 {
@@ -258,9 +265,8 @@ static VALUE binomial_rand(VALUE self)
 }
 
 /*
- * call-seq: binomial.n
- *
- * Returns the parameter n.
+ * @!attribute [r] n
+ * @return [Integer] the parameter n
  */
 static VALUE binomial_n(VALUE self)
 {
@@ -271,9 +277,8 @@ static VALUE binomial_n(VALUE self)
 }
 
 /*
- * call-seq: binomial.theta
- *
- * Returns the parameter theta.
+ * @!attribute [r] theta
+ * @return [Float] the parameter theta
  */
 static VALUE binomial_theta(VALUE self)
 {

@@ -1,5 +1,15 @@
 #include "randomext.h"
 
+/* 
+ * Draws a random sample from a von Mises distribution.
+ *
+ * The return value is contained in [-PI, PI].
+ *
+ * @overload vonmises(mu, kappa)
+ * @param [Float] mu direction parameter (-PI <= mu <= PI)
+ * @param [Float] kappa concentration parameter (kappa > 0)
+ * @return [Float] A random sample in [-PI, PI]
+ */
 static VALUE random_vonmises(VALUE self, VALUE vmu, VALUE vkappa)
 {
   double mu = NUM2DBL(vmu);
@@ -37,6 +47,17 @@ static VALUE random_vonmises(VALUE self, VALUE vmu, VALUE vkappa)
   }
 }
 
+/*
+ * Draws a random sample from a Zipf-Mandelbrot distribution.
+ *
+ * In case of q == 0.0, the distribution is called a Zipf distribution.
+ *
+ * @overload zipf_mandelbrot(n, q=0.0, s=1.0)
+ * @param [Integer] n the maximum of return value (n > 0)
+ * @param [Float] q a parameter (q >= 0.0)
+ * @param [Float] s a parameter (s > 0.0)
+ * @return [Integer] a random sample in 1..n
+ */
 static VALUE random_zipf(int argc, VALUE *argv, VALUE self)
 {
   VALUE vN, vs, vq;
@@ -69,6 +90,13 @@ static VALUE random_zipf(int argc, VALUE *argv, VALUE self)
   return INT2NUM(N);
 }
 
+/*
+ * Draws a random sample from a zeta distribution.
+ *
+ * @overload zeta(s)
+ * @param [Integer] s a parameter (s > 0.0)
+ * @return [Integer] a random sample in [1, INFINITY)
+ */
 static VALUE random_zeta(VALUE self, VALUE vs)
 {
   double s = NUM2DBL(vs);
