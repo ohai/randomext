@@ -22,14 +22,17 @@ many kinds of probability distributions such as:
   * chi_square
   * F
   * t
+  * Wald (inverse Gaussian)
   * Pareto
   * logistic
+  * von Mises
   * Bernoulli
   * binomial
   * Poisson
   * geometric
-  * negative_binomial
-  * zipf_mandelbrot
+  * negative binomial
+  * log series
+  * Zipf-Mandelbrot
   * zeta
 
 = Usage
@@ -39,4 +42,4 @@ require 'randomext' and some methods and classes are added to class Random.
 Almost all algorithms are based on:
 四辻哲章, "計算機シミュレーションのための確率分布乱数生成法", プレアデス出版 (2010)
 
-I examine numpy to select distributions.
+I examine numpy to select nice distributions.
