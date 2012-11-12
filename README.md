@@ -55,3 +55,7 @@ Almost all algorithms are based on:
 四辻哲章, "計算機シミュレーションのための確率分布乱数生成法", プレアデス出版 (2010)
 
 I examine numpy to select nice distributions.
+
+## URLs
+* [Web site](http://www.kmc.gr.jp/~ohai/randomext/)
+* [Repository](https://bitbucket.org/ohai/randomext)
