@@ -134,6 +134,20 @@ class Random
     y1/(y1+y2)
   end
 
+  # Draws a random sample from a Dirichlet distribution.
+  #
+  # @param [Array<Float>] as shape parameters
+  # @return [Array<Float>] a random sample in the (K-1)-dimensional simplex (K == as.size)
+  def dirichlet(*as)
+    if as.any?{|a| a <= 0.0}
+      raise ArgumentError, "Random#dirichlet: parameters must be positive"
+    end
+
+    ys = as.map{|a| gamma(a) }
+    sum = ys.inject(0.0, &:+)
+    ys.map{|y| y/sum }
+  end
+  
   # Draws a random sample from a power function distribution
   #
   # @param [Float] shape shape parameter (shape > 0.0)
