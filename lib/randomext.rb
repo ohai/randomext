@@ -234,6 +234,11 @@ class Random
     mu + theta*log(u/(1-u))
   end
 
+  # Draws a random sample from a Non-Central Chi-Square distribution.
+  #
+  # @param [Integer] r a parameter (r > 0)
+  # @param [Float] lambda another parameter (lambda > 0)
+  # @return [Float] a random sample in (0, INFINITY)
   def non_central_chi_square(r, lambda)
     if lambda < 0.0
       raise ArgumentError, "Random#non_central_chi_square: lambda must be positive"
@@ -244,7 +249,12 @@ class Random
     j = poisson(lambda/2)
     chi_square(r + 2*j)
   end
-  
+
+  # Draws a random sample from a Non-Central t distribution
+  #
+  # @param [Integer] r a parameter (r > 0)
+  # @param [Float] lambda another parameter (lambda > 0)
+  # @return [Float] a random sample
   def non_central_t(r, lambda)
     if lambda == 0.0
       raise ArgumentError, "Random#non_central_t: lambda must not be 0"
