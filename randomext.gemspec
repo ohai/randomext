@@ -23,5 +23,5 @@ EOS
     Dir.glob("ext/*.[ch]")
   spec.extensions << 'ext/extconf.rb'
   spec.has_rdoc = false
-  spec.homepage = "https://bitbucket.org/ohai/randomext"
+  spec.homepage = "http://www.kmc.gr.jp/~ohai/randomext/"
 end

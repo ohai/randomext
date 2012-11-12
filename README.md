@@ -58,4 +58,14 @@ I examine numpy to select nice distributions.
 
 ## URLs
 * [Web site](http://www.kmc.gr.jp/~ohai/randomext/)
-* [Repository](https://bitbucket.org/ohai/randomext)
+* [Repository and issue tracker](https://bitbucket.org/ohai/randomext)
+
+## Author
+Ippei Obayashi <ohai@kmc.gr.jp>
+
+## Copyright
+Copyright (c) 2012, Ippei Obayashi
+All rights reserved.
+
+The software is licensed under the BSD 2-Clause License.
+Please see the {file:LICENSE} for more information.

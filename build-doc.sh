@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yardoc -m markdown
+yardoc -m markdown --files LICENSE
