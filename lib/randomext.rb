@@ -12,9 +12,10 @@ class Random
 
   # Draws a random sample from a log normal distribution.
   #
-  # The lognormal distribution with parameters mu and sigma
-  # is defined:
-  #   1/sqrt(2*PI*sigma**2)*exp(-(log(x)-mu)**2/(2*sigma**2))
+  # The probabilistic mass function of lognormal distribution is defined:
+  #
+  #     1/sqrt(2*PI*sigma**2)*exp(-(log(x)-mu)**2/(2*sigma**2))
+  #
   # @param [Float] mu the mean in a normal distribution
   # @param [Float] sigma the standard deviarion in a normal distribution
   # @return [Float] a random sample in (0, INFINITY)
@@ -226,7 +227,8 @@ class Random
   # Draws a random sample from a Pareto distribution.
   #
   # The probabilistic mass function for the distribution is defined as:
-  #   p(x) = a*b**a/x**(a+1)
+  #
+  #     p(x) = a*b**a/x**(a+1)
   #
   # @param [Float] a shape parameter (a > 0.0)
   # @param [Float] b scale parameter (b > 0.0)

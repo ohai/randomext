@@ -1,12 +1,13 @@
-= randomext
+# randomext
 The library extends class Random in the Ruby standard library.
 
-== Overview
+## Overview
 The Random class in the Ruby standard library supports only 
 random sampling from discrete/continuous uniform distribution.
 
 This library provides random sampling methods from 
 many kinds of probability distributions such as:
+
 * normal (Gaussian)
 * lognormal
 * Cauthy
@@ -38,14 +39,18 @@ many kinds of probability distributions such as:
 * Zipf-Mandelbrot
 * zeta
 
-== Usage
+## Usage
 To use this library, you need to install randomext gem:
-  gem install randomext
+
+    gem install randomext
+
 And write 
-  require 'randomext'
+
+    require 'randomext'
+
 in your ruby script, then you can use some additional methods in Random class.
 
-== References
+## References
 Almost all algorithms are based on:
 四辻哲章, "計算機シミュレーションのための確率分布乱数生成法", プレアデス出版 (2010)
 
