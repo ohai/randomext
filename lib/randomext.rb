@@ -233,11 +233,34 @@ class Random
     u = rand_open_interval
     mu + theta*log(u/(1-u))
   end
+
+  def non_central_t(r, lambda)
+    if lambda == 0.0
+      raise ArgumentError, "Random#non_central_t: lambda must not be 0"
+    end
+
+    if r == 1
+      z = standard_normal + lambda
+      w = standard_normal.abs
+      z/w
+    elsif r == 2
+      z = standard_normal + lambda
+      w = standard_exponential
+      z/Math.sqrt(w)
+    elsif r > 2
+      d = Math.sqrt(r/2.0)
+      z = standard_normal + lambda
+      w = _gamma(r/2.0)
+      d*z/Math.sqrt(w)
+    else
+      raise ArgumentError, "Random#non_central_t: r must be positive"
+    end
+  end
   
   # Draw a random sample from a Bernoulli distribution.
   #
   # @param [Float] p the probability returning 1
-  # @return [Integer] a random sample 
+  # @return [Integer] a random sample, 0 or 1
   def bernoulli(p)
     (rand < p) ? 1 : 0
   end

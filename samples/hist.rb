@@ -11,6 +11,14 @@ module Enumerable
   end
 end
 
+class Numeric
+  def sign
+    return 1 if self > 0
+    return -1 if self < 0
+    return 0
+  end
+end
+
 def histogram(num_bins, num_samples, min, max, gen)
   binsize = (max - min).to_f / num_bins
   bins = Array.new(num_bins, 0)
@@ -172,6 +180,18 @@ module Distribution
     } 
     exp(kappa*cos(x-mu))/(2*PI*i0)
   end
+
+  def non_central_t(x, r, lambda)
+    r = r.to_f; lambda = lambda.to_f
+    u = (0..70).map do |j|
+      w = j*log(lambda) - lambda**2/2 - sumlog(1, j) +
+        j/2.0 *log(2.0/r) + lgamma((r+j+1)/2.0).first + j * log(x.abs) -
+        0.5*log(PI*r) - lgamma(r/2.0).first -
+        (r+j+1)/2.0*log(1 + (x**2.0)/r)
+      x.sign**j*exp(w)
+    end
+    u.sum
+  end
   
   def combination(n ,r)
     r = n - r if n/2 < r
@@ -191,7 +211,6 @@ module Distribution
     end
     (n-2*x).times{ ret *= q }
     return ret
-    combination(n, x) * BigDecimal(p,14)**x * BigDecimal(1-p,14)**(n-x)
   end
 
   def geometric(x, theta)
@@ -328,6 +347,7 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("logistic", 100, 100000, -10, 10, reporter,
                  proc{ rng.logistic(0.8, 1.2) },
                  proc{|x| Distribution.logistic(x, 0.8, 1.2) })
+  
   draw_histogram("vonmises-0.2", 80, 100000, -PI, PI, reporter,
                  proc{ rng.vonmises(0.0, 0.2) },
                  proc{|x| Distribution.vonmises(x, 0.0, 0.2) })
@@ -335,10 +355,24 @@ Benchmark.bm(14) do |reporter|
                  proc{ rng.vonmises(0.0, 16) },
                  proc{|x| Distribution.vonmises(x, 0.0, 16) })
   
+  draw_histogram("non_central_t-10-3", 100, 100000, -7.0, 13.0, reporter,
+                 proc{ rng.non_central_t(10, 3.0) },
+                 proc{|x| Distribution.non_central_t(x, 10, 3.0) })
+  draw_histogram("non_central_t-1-1.2", 100, 100000, -7.0, 7.0, reporter,
+                 proc{ rng.non_central_t(1, 1.2) },
+                 proc{|x| Distribution.non_central_t(x, 1, 1.2) })
+  draw_histogram("non_central_t-2-1.2", 100, 100000, -7.0, 7.0, reporter,
+                 proc{ rng.non_central_t(2, 1.2) },
+                 proc{|x| Distribution.non_central_t(x, 2, 1.2) })
+  
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
                       proc{|x| x == 0 ? 0.35 : 0.65 })
 
+  draw_disc_histogram("geometric", 100000, reporter,
+                      proc{ rng.geometric(0.1) },
+                      proc{|x| Distribution.geometric(x, 0.1) })
+  
   draw_disc_histogram("binomial1-20", 100000, reporter,
                       proc{ rng.binomial(20, 0.45) },
                       proc{|x| Distribution.binomial(x, 20, 0.45) })
@@ -346,10 +380,6 @@ Benchmark.bm(14) do |reporter|
                       proc{ rng.binomial(200, 0.65) },
                       proc{|x| Distribution.binomial(x, 200, 0.65) })
 
-  draw_disc_histogram("geometric", 100000, reporter,
-                      proc{ rng.geometric(0.1) },
-                      proc{|x| Distribution.geometric(x, 0.1) })
-  
   binomial = Random::Binomial.new(rng, 20, 0.45);
   draw_disc_histogram("binomial2-20", 100000, reporter,
                       proc{ binomial.rand },
