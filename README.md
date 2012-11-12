@@ -20,7 +20,7 @@ many kinds of probability distributions such as:
 * gamma
 * beta
 * power
-* chi_square
+* Chi-square
 * F
 * t
 * Wald (inverse Gaussian)
