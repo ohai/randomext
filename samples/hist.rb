@@ -181,14 +181,24 @@ module Distribution
     exp(kappa*cos(x-mu))/(2*PI*i0)
   end
 
+  def non_central_chi_square(x, r, l)
+    r = r.to_f; l = l.to_f
+    u = (0..70).map do |j|
+      w = j*log(l.abs/2) - l/2 + (r/2+j-1)*log(x) - x/2 -
+        sumlog(1, j) - (r/2+j)*log(2) -lgamma(r/2+j).first
+      (l.sign)**j * exp(w)
+    end
+    u.sum
+  end
+  
   def non_central_t(x, r, lambda)
     r = r.to_f; lambda = lambda.to_f
     u = (0..70).map do |j|
-      w = j*log(lambda) - lambda**2/2 - sumlog(1, j) +
+      w = j*log(lambda.abs) - lambda**2/2 - sumlog(1, j) +
         j/2.0 *log(2.0/r) + lgamma((r+j+1)/2.0).first + j * log(x.abs) -
         0.5*log(PI*r) - lgamma(r/2.0).first -
         (r+j+1)/2.0*log(1 + (x**2.0)/r)
-      x.sign**j*exp(w)
+      (x.sign*lambda.sign)**j*exp(w)
     end
     u.sum
   end
@@ -354,16 +364,23 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("vonmises-16", 100, 100000, -PI, PI, reporter,
                  proc{ rng.vonmises(0.0, 16) },
                  proc{|x| Distribution.vonmises(x, 0.0, 16) })
+
+  draw_histogram("non_central_chi_square", 100, 100000, 0.0, 24.0, reporter,
+                 proc{ rng.non_central_chi_square(2, 1.8) },
+                 proc{|x| Distribution.non_central_chi_square(x, 2, 1.8) })
   
   draw_histogram("non_central_t-10-3", 100, 100000, -7.0, 13.0, reporter,
                  proc{ rng.non_central_t(10, 3.0) },
                  proc{|x| Distribution.non_central_t(x, 10, 3.0) })
-  draw_histogram("non_central_t-1-1.2", 100, 100000, -7.0, 7.0, reporter,
+  draw_histogram("non_central_t-1-1.2", 100, 100000, -7.0, 12.0, reporter,
                  proc{ rng.non_central_t(1, 1.2) },
                  proc{|x| Distribution.non_central_t(x, 1, 1.2) })
-  draw_histogram("non_central_t-2-1.2", 100, 100000, -7.0, 7.0, reporter,
+  draw_histogram("non_central_t-2-1.2", 100, 100000, -7.0, 12.0, reporter,
                  proc{ rng.non_central_t(2, 1.2) },
                  proc{|x| Distribution.non_central_t(x, 2, 1.2) })
+  draw_histogram("non_central_t-2--1.2", 100, 100000, -12.0, 7.0, reporter,
+                 proc{ rng.non_central_t(2, -1.2) },
+                 proc{|x| Distribution.non_central_t(x, 2, -1.2) })
   
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },

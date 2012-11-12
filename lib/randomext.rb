@@ -234,6 +234,17 @@ class Random
     mu + theta*log(u/(1-u))
   end
 
+  def non_central_chi_square(r, lambda)
+    if lambda < 0.0
+      raise ArgumentError, "Random#non_central_chi_square: lambda must be positive"
+    end
+    if !r.integer? || r <= 0
+      raise ArgumentError, "Random#non_central_chi_square: r must be positive integer"
+    end
+    j = poisson(lambda/2)
+    chi_square(r + 2*j)
+  end
+  
   def non_central_t(r, lambda)
     if lambda == 0.0
       raise ArgumentError, "Random#non_central_t: lambda must not be 0"
