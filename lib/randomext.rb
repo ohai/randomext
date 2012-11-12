@@ -299,6 +299,21 @@ class Random
     (d * standard_exponential).floor + 1
   end
 
+  # Draws a random sample from a Planck distribution.
+  #
+  # @param [Float] a shape parameter
+  # @param [Float] b scale parameter
+  # @return [Float] a random sample in (0, INFINITY)
+  def planck(a, b)
+    if a <= 0 || b <= 0
+      raise ArgumentError, "Random#planck: parameters must be positive"
+    end
+    
+    y = _gamma(a+1)
+    j = zeta(a+1)
+    b*y/j
+  end
+  
   # Draws a random sample from a negative binomial distribution.
   #
   # @param [Float] r s parameter (0 < r)

@@ -202,6 +202,10 @@ module Distribution
     end
     u.sum
   end
+
+  def planck(x, a, b)
+    (b**(-a-1) * x**a)/(Math.gamma(a+1) * Zeta(a+1) * (exp(x/b)-1))
+  end
   
   def combination(n ,r)
     r = n - r if n/2 < r
@@ -381,6 +385,10 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("non_central_t-2--1.2", 100, 100000, -12.0, 7.0, reporter,
                  proc{ rng.non_central_t(2, -1.2) },
                  proc{|x| Distribution.non_central_t(x, 2, -1.2) })
+
+  draw_histogram("planck", 100, 100000, 0.0, 12.0, reporter,
+                 proc{ rng.planck(3, 1) },
+                 proc{|x| Distribution.planck(x, 3, 1) })
   
   draw_disc_histogram("bernoulli", 100000, reporter,
                       proc{ rng.bernoulli(0.65) },
