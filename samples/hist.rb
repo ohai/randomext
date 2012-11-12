@@ -288,57 +288,70 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("cauthy", 100, 100000, -40.0, 46.0, reporter,
                  proc{ rng.cauthy(3.0, 1.5) },
                  proc{|x| Distribution.cauthy(x, 3.0, 1.5) })
+  
   draw_histogram("levy", 200, 100000, 0.0, 40.0, reporter,
                  proc{ rng.levy(0.8, 1.2) },
                  proc{|x| Distribution.levy(x, 0.8, 1.2)})
+  
   draw_histogram("exponential", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.exponential(1.3) },
                  proc{|x| Distribution.exponential(x, 1.3) })
   draw_histogram("standard_exponential", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.standard_exponential },
                  proc{|x| Distribution.exponential(x, 1.0) })
+  
   draw_histogram("laplace", 100, 100000, -6.0, 6.0, reporter,
                  proc{ rng.laplace(0, 1) },
                  proc{|x| Distribution.laplace(x, 0, 1)})
+  
   draw_histogram("rayleigh", 100, 100000, 0.0, 5.0, reporter,
                  proc{ rng.rayleigh(1.2) },
                  proc{|x| Distribution.rayleigh(x, 1.2) })
+  
   draw_histogram("weibull", 100, 100000, 0.0, 5.0, reporter,
                  proc{ rng.weibull(3.0, 1) },
                  proc{|x| Distribution.weibull(x, 3.0, 1) })
+  
   draw_histogram("gumbel", 100, 100000, -4.0, 8.0, reporter,
                  proc{ rng.gumbel(0, 1) },
                  proc{|x| Distribution.gumbel(x, 0, 1) })
+  
   draw_histogram("gamma", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.gamma(2.0, 1.0) },
                  proc{|x| Distribution.gamma(x, 2.0, 1.0) })
+  
   draw_histogram("gamma2", 200, 100000, 0.0, 4.0, reporter,
                  proc{ rng.gamma(0.4, 1.0) },
                  proc{|x| Distribution.gamma(x, 0.4, 1.0) })
+  
   draw_histogram("beta", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(4.3, 7.2) },
                  proc{|x| Distribution.beta(x, 4.3, 7.2) })
   draw_histogram("beta2", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.beta(0.7, 0.42) },
                  proc{|x| Distribution.beta(x, 0.7, 0.42) })
+  
   draw_histogram("power-4", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.power(4.0, 0.0, 1.0) },
                  proc{|x| Distribution.power(x, 4.0, 0.0, 1.0) })
   draw_histogram("power-0.5", 100, 100000, 0.0, 1.0, reporter,
                  proc{ rng.power(0.5, 0.0, 1.0) },
                  proc{|x| Distribution.power(x, 0.5, 0.0, 1.0) })
+  
   draw_histogram("chi_square-1",100, 100000, 0.0, 20.0, reporter,
                  proc{ rng.chi_square(1) },
                  proc{|x| Distribution.chi_square(x, 1) })
   draw_histogram("chi_square-5",100, 100000, 0.0, 20.0, reporter,
                  proc{ rng.chi_square(5) },
                  proc{|x| Distribution.chi_square(x, 5) })
+  
   draw_histogram("F-2-8", 100, 100000, 0.0, 10.0, reporter,
                  proc{ rng.F(2, 8) },
                  proc{|x| Distribution.F(x, 2, 8) })
   draw_histogram("F-20-45", 100, 100000, 0.0, 3.5, reporter,
                  proc{ rng.F(20, 45) },
                  proc{|x| Distribution.F(x, 20, 45) })
+  
   draw_histogram("t-1", 100, 100000, -8.0, 8.0, reporter,
                  proc{ rng.t(1) },
                  proc{|x| Distribution.t(x, 1) })
@@ -351,9 +364,11 @@ Benchmark.bm(14) do |reporter|
   draw_histogram("t-20", 100, 100000, -8.0, 8.0, reporter,
                  proc{ rng.t(20) },
                  proc{|x| Distribution.t(x, 20) })
+  
   draw_histogram("wald", 100, 100000, 0.0, 3.0, reporter,
                  proc{ rng.wald(2.0, 1.2) },
                  proc{|x| Distribution.wald(x, 2.0, 1.2) })
+  
   draw_histogram("pareto1-4.5", 100, 100000, 1.0, 4.0, reporter,
                  proc{ rng.pareto(4.5, 1) },
                  proc{|x| Distribution.pareto(x, 4.5, 1) })
@@ -440,15 +455,19 @@ Benchmark.bm(14) do |reporter|
   draw_disc_histogram("negative_binomial-0.6-0.5", 100000, reporter,
                       proc{ rng.negative_binomial(0.6, 0.5) },
                       proc{|x| Distribution.negative_binomial(x, 0.6, 0.5) })
+  
   draw_disc_histogram("logseries-0.6", 100000, reporter,
                       proc{ rng.logseries(0.6) },
                       proc{|x| Distribution.logseries(x, 0.6) })
+  
   draw_disc_histogram("logseries-0.95", 100000, reporter,
                       proc{ rng.logseries(0.95) },
                       proc{|x| Distribution.logseries(x, 0.95) })
+  
   draw_disc_histogram("zipf_mandelbrot", 100000, reporter,
                       proc{ rng.zipf_mandelbrot(20, 2.1, 1.9) },
                       proc{|x| Distribution.zipf_mandelbrot(x, 20, 2.1, 1.9) })
+  
   draw_histogram("zeta", 20, 100000, 0.5, 20.5, reporter,
                  proc{ rng.zeta(2) },
                  proc{|x| Distribution.zeta(x, 2) })
