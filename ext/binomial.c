@@ -290,27 +290,6 @@ static VALUE binomial_theta(VALUE self)
   return DBL2NUM(bin->theta);
 }
 
-#if 0
-static VALUE binomial_debug_info(VALUE self)
-{
-  binomial_t *bin;
-  int i;
-  
-  Data_Get_Struct(self, binomial_t, bin);
-  
-
-  printf("N=%d\n", bin->N);
-  for (i=0; i<bin->N; ++i) {
-    printf("%d ", bin->T[i]);
-  }
-  puts("");
-  for (i=0; i<=bin->n; ++i) {
-    printf("%f %d\n", bin->V[i], bin->K[i]);
-  }
-  return Qnil;
-}
-#endif
-
 void randomext_binomial_init(VALUE cRandom)
 {
   VALUE cBinomial = rb_define_class_under(cRandom, "Binomial", rb_cObject);
@@ -321,5 +300,4 @@ void randomext_binomial_init(VALUE cRandom)
   rb_define_method(cBinomial, "rand", binomial_rand, 0);
   rb_define_method(cBinomial, "n", binomial_n, 0);
   rb_define_method(cBinomial, "theta", binomial_theta, 0);
-  //rb_define_method(cBinomial, "debug_info", binomial_debug_info, 0);
 }
