@@ -265,7 +265,8 @@ static VALUE binomial_rand(VALUE self)
 }
 
 /*
- * @!attribute [r] n
+ * Returns the parameter n, the number of trials.
+ *
  * @return [Integer] the parameter n
  */
 static VALUE binomial_n(VALUE self)
@@ -277,7 +278,8 @@ static VALUE binomial_n(VALUE self)
 }
 
 /*
- * @!attribute [r] theta
+ * Returns the parameter theta, the success probability.
+ *
  * @return [Float] the parameter theta
  */
 static VALUE binomial_theta(VALUE self)
