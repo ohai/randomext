@@ -137,7 +137,6 @@ static void fill_binomial_VK_table(binomial_t *bin, double ntheta[])
 static void fill_binomial_T_VT_table(binomial_t *bin)
 {
   int k, i, x;
-  int nt;
   int *qt = ALLOC_N(int, bin->n + 2);
   double *theta = ALLOC_N(double, bin->n + 1);
   double *ntheta = ALLOC_N(double, bin->n + 1);
@@ -145,7 +144,6 @@ static void fill_binomial_T_VT_table(binomial_t *bin)
   
   for (k=7; ;k++) {
     int b = pow2(k);
-    nt = 0;
     qt[0] = 0;
     for (x=0; x<=bin->n; x++) {
       qt[x+1] = floor(b*bin->p[x]) + qt[x];
