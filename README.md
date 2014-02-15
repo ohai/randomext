@@ -50,6 +50,14 @@ And write
 
 in your ruby script, then you can use some additional methods in Random class.
 
+## Example
+Create an sequence of random numbers from the Gaussian distribution with
+the mean is 0.0 and S.D. is 2.0.
+
+    require 'randomext'
+    random_numbers = Array.new(100){ Random::DEFAULT.normal(0.0, 2.0) }
+
+
 ## References
 Almost all algorithms are based on:
 四辻哲章, "計算機シミュレーションのための確率分布乱数生成法", プレアデス出版 (2010)
