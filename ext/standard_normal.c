@@ -6,38 +6,11 @@
 #define M 64
 #define N (1<<K)
 
-static double* w = NULL;
-static uint64_t* k;
-static double* f;
+#include "standard_normal_table.h"
 
 inline static double sn(double x)
 {
   return exp(-x*x/2);
-}
-
-static void init_snormal_table(void)
-{
-  int i;
-  double xi;
-  
-  w = ALLOC_N(double, N);
-  k = ALLOC_N(uint64_t, N);
-  f = ALLOC_N(double, N);
-  
-  w[N-1] = V*exp(R*R/2)/pow2(M-K-1);
-  w[N-2] = R/pow2(M-K-1);
-  k[N-1] = floor(R/w[N-1]);
-  f[N-1] = sn(R);
-  xi = R;
-  
-  for (i=N-2; i>=1; --i) {
-    xi = sqrt(-2*log(sn(xi)+V/xi));
-    w[i-1] = xi/pow2(M-K-1);
-    k[i] = floor(xi/w[i]);
-    f[i] = sn(xi);
-  }
-  k[0] = 0;
-  f[0] = 1;
 }
 
 static double sample_from_tail(VALUE random)
@@ -56,9 +29,6 @@ double randomext_random_standard_normal(VALUE random)
   int sign;
   double ux;
 
-  if (w == NULL)
-    init_snormal_table();
-  
   for (;;) {
     unsigned int u0 = rb_random_int32(random);
     i = u0 & MASK(K);
