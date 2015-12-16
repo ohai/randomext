@@ -26,9 +26,9 @@ static inline double hypergeometric_distribution(int x, int N, int M, int n)
  * Inverse method is used.
  *
  * @overload hypergeometric(N, M, n)
- * @param [Integer] N a population (N >= 0)
- * @param [Integer] M the number of successes (0 <= M <= N)
- * @param [Integer] n the number of samples (0 <= n <= N)
+ *   @param [Integer] N a population (N >= 0)
+ *   @param [Integer] M the number of successes (0 <= M <= N)
+ *   @param [Integer] n the number of samples (0 <= n <= N)
  * @return [Integer] a random sample in [max(0, n-(N-M)), min(n, M)]
  */
 static VALUE random_hypergoemtric_inv(VALUE self, VALUE vN, VALUE vM, VALUE vn)

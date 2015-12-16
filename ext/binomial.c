@@ -1,5 +1,20 @@
 #include "randomext.h"
 
+/*
+ * Document-class: Random::Binomial
+ *
+ * A random sampler from the binoial distribution.
+ * 
+ * This sampler uses table plus square histgram method with
+ * Robin Hoot method. This method constructs a table for each
+ * distribution. If you once construct the table, you can
+ * draw a random sample fast for large n (n >= 40), but the
+ * cost of the table construction is expensive. Therefore,
+ * if you need to draw many samples from the same binomial distribution,
+ * you had better to use this class. Otherwise, you should use
+ * {Random#binomial}.
+ *
+ */
 typedef struct {
   int n;
   double theta;
@@ -54,8 +69,8 @@ static void check_binomial_params(int n, double theta, const char* method_name)
  * Inverse function method is used.
  *
  * @overload binomial(n, theta)
- * @param [Integer] n the number of trials (n > 0)
- * @param [Float] theta success probability (0 < theta < 1)
+ *   @param [Integer] n the number of trials (n > 0)
+ *   @param [Float] theta success probability (0 < theta < 1)
  * @return [Integer] a random sample in 0..n
  */
 static VALUE random_binomial_inv(VALUE self, VALUE num, VALUE prob)
@@ -198,19 +213,10 @@ static VALUE binomial_alloc(VALUE klass)
 /*
  * Returns a random sampler from a binomial distribution.
  *
- * This sampler uses table plus square histgram method with
- * Robin Hoot method. This method constructs a table for each
- * distribution. If you once construct the table, you can
- * draw a random sample fast for large n (n >= 40), but the
- * cost of the table construction is expensive. Therefore,
- * if you need to draw many samples from the same binomial distribution,
- * you had better to use this class. Otherwise, you should use
- * Random#binomial.
- *
  * @overload initialize(rng, n, theta)
- * @param [Random] rng a random number generator
- * @param [Integer] n the number of trials (n > 0)
- * @param [Float] theta success probability (0 < theta < 1)
+ *   @param [Random] rng a random number generator
+ *   @param [Integer] n the number of trials (n > 0)
+ *   @param [Float] theta success probability (0 < theta < 1)
  * @return [Random::Binomial] a random number generator from the specified binomial distribution
  */
 static VALUE binomial_initialize(VALUE self, VALUE rng, VALUE num, VALUE prob)
