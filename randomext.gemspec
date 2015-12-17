@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "randomext"
-  spec.version = "0.1"
+  spec.version = "0.1.1"
   spec.summary = "This library extend Random class of Ruby standard library"
   spec.author = "Ippei Obayashi"
   spec.email = "ohai@kmc.gr.jp"
