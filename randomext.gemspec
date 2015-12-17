@@ -24,4 +24,5 @@ EOS
   spec.extensions << 'ext/extconf.rb'
   spec.has_rdoc = false
   spec.homepage = "http://www.kmc.gr.jp/~ohai/randomext/"
+  spec.license = "BSD-2-Clause"
 end
