@@ -55,7 +55,8 @@ Create an sequence of random numbers from the Gaussian distribution whose
 mean is 0.0 and S.D. is 2.0.
 
     require 'randomext'
-    random_numbers = Array.new(100){ Random::DEFAULT.normal(0.0, 2.0) }
+    rng = Random.new  # rng means Random Number Generator
+    random_numbers = Array.new(100){ rng.normal(0.0, 2.0) }
 
 
 ## References
@@ -66,7 +67,7 @@ I examine numpy to select nice distributions.
 
 ## URLs
 * [Web site](http://www.kmc.gr.jp/~ohai/randomext/)
-* [Repository and issue tracker](https://bitbucket.org/ohai/randomext)
+* [Repository and issue tracker](https://github.com/ohai/randomext)
 
 ## Author
 Ippei Obayashi <ohai@kmc.gr.jp>
